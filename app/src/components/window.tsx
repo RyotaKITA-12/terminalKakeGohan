@@ -1,6 +1,7 @@
-import React from 'react';
-import { windowContext } from '@/context/window';
-import { Window } from '@/@types/window';
+import React from "react";
+import { windowContext } from "@/context/window";
+import { Window } from "@/@types/window";
+import Styles from "./App.module.scss";
 
 // ウィンドウのプロパティ
 type RetroWindowProps = {
@@ -8,10 +9,10 @@ type RetroWindowProps = {
 };
 
 // ウィンドウのコンポーネント
-const RetroWindow = (props:RetroWindowProps) => {
+const RetroWindow = (props: RetroWindowProps) => {
 
-	// Context の設定
-	const { data, setWindowContext } = React.useContext(windowContext);
+  // Context の設定
+  const { data, setWindowContext } = React.useContext(windowContext);
 
   // ウィンドウの状態
   const [drugging, setDrugging] = React.useState(false);
@@ -53,22 +54,28 @@ const RetroWindow = (props:RetroWindowProps) => {
   
   // drugging が変更された時の副作用を設定
   React.useEffect(() => {
-    if(drugging) { window.addEventListener('mousemove', onMouseMove); }
-    if(!drugging) { window.removeEventListener('mousemove', onMouseMove); }
-  });
-  
+    if (drugging) {
+      window.addEventListener("mousemove", onMouseMove);
+    }
+    else {
+      window.removeEventListener("mousemove", onMouseMove);
+    }
+  }, [drugging]);
+
   // ウィンドウ全体に対してイベントリスナーを追加
-  window.addEventListener('mouseup', onMouseUp);
-  
+  React.useEffect(() => {
+  	window.addEventListener("mouseup", onMouseUp);
+	}, [0]);
+
   // ウィンドウを描画
   return (
-    <div className='window tkg-window' ref={innerWindow}>
-      <div className='title-bar' onMouseDown={onMouseDown}>
-        <div className='title-bar-text'>{props.window.title}</div>
-        <div className='title-bar-controls'>
-          <button aria-label='Minimize'/>
-          <button aria-label='Maximize'/>
-          <button aria-label='Close'/>
+    <div className={`window ${Styles.inner_window}`} ref={innerWindow}>
+      <div className="title-bar" onMouseDown={onMouseDown}>
+        <div className="title-bar-text">{props.window.title}</div>
+        <div className="title-bar-controls">
+          <button aria-label="Minimize" />
+          <button aria-label="Maximize" />
+          <button aria-label="Close" />
         </div>
       </div>
       { !props.window.isMinimized && <div className='window-body'>{props.window.child}</div> }
