@@ -38,8 +38,17 @@ const RetroWindow = (props: RetroWindowProps) => {
 
 			// ウィンドウが移動中の場合
 			if(windowMode === 'moving') {
-				innerWindow.current.style.left = `${event.pageX + drugoffset.x}px`;
-				innerWindow.current.style.top = `${event.pageY + drugoffset.y}px`;
+
+        let left = event.pageX + drugoffset.x;
+        left = Math.max(left, 0);
+        left = Math.min(left, window.innerWidth - innerWindow.current.offsetWidth);
+				innerWindow.current.style.left = `${left}px`;
+
+        let top = event.pageY + drugoffset.y;
+        top = Math.max(top, 0);
+        top = Math.min(top, window.innerHeight - innerWindow.current.offsetHeight);
+				innerWindow.current.style.top = `${top}px`;
+        
 			}
 
 			// ウィンドウサイズを変更している場合
