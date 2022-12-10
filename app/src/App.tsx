@@ -11,6 +11,7 @@ import { Color } from "@/components/color/Color";
 import { ColorContext } from "@/context/color";
 import { defaultColors } from "@/definition/colors";
 import { Logo } from "@/components/logo/Logo";
+import { Inspector } from "@/components/inspector/Inspector";
 
 const App = () => {
   const [data, setWindow] = useState<ManagedWindow>({});
@@ -30,11 +31,11 @@ const App = () => {
       minWidth: 350,
       minimized: true,
     });
-    const Inspector = createWindow("INSPECTOR", <></>);
+    const inspector = createWindow("INSPECTOR", <Inspector />);
     const window: ManagedWindow = {};
     window[ColorPicker.id] = ColorPicker;
     window[Prompts.id] = Prompts;
-    window[Inspector.id] = Inspector;
+    window[inspector.id] = inspector;
     setWindow(window);
   }, [0]);
   const windows = [],
