@@ -2,14 +2,18 @@ import { ReactNode } from "react";
 import { Window } from "@/@types/window";
 import { generateUuid } from "@/libs/uuid";
 
-const createWindow = (title: string, child: ReactNode): Window => {
+const createWindow = (
+  title: string,
+  child: ReactNode,
+  data?: { closable?: boolean; uuid?: string; width?: number; height?: number }
+): Window => {
   return {
-    id: generateUuid(),
-    isClosable: false,
+    id: data?.uuid || generateUuid(),
+    isClosable: data?.closable || false,
     isMinimized: false,
     isMaximized: false,
     pos: { x: 0, y: 0 },
-    size: { width: 300, height: 300 },
+    size: { width: data?.width || 300, height: data?.height || 300 },
     title,
     child,
   };
