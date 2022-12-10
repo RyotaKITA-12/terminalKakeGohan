@@ -58,8 +58,8 @@ const RetroWindow = (props: RetroWindowProps) => {
 			if (innerWindow.current && drugging) {
 				setDrugging(false);
 				props.window.pos = {
-					x: Number(innerWindow.current.style.left),
-					y: Number(innerWindow.current.style.top),
+					x: Number(innerWindow.current.style.left.slice(0, -2)),
+					y: Number(innerWindow.current.style.top.slice(0, -2)),
 				};
 				if (setWindowContext) {
 					setWindowContext({ [props.window.id]: props.window, ...data });
@@ -69,7 +69,8 @@ const RetroWindow = (props: RetroWindowProps) => {
   };
 
   // 最小化する時のイベント
-  const onMinimize: MouseEventHandler<HTMLButtonElement> = () => {
+  const onMinimize: MouseEventHandler<HTMLButtonElement> = event => {
+		event.stopPropagation();
 		setDrugging(false);
     if(!props.window.isMinimized) {
         props.window.isMinimized = true;
@@ -84,7 +85,8 @@ const RetroWindow = (props: RetroWindowProps) => {
   }
 
   // 最大化する時のイベント
-  const onMaximize: MouseEventHandler<HTMLButtonElement> = () => {
+  const onMaximize: MouseEventHandler<HTMLButtonElement> = event => {
+		event.stopPropagation();
 		setDrugging(false);
     if(!props.window.isMaximized) {
 			props.window.isMaximized = true;
@@ -103,10 +105,11 @@ const RetroWindow = (props: RetroWindowProps) => {
     if (drugging) {
       window.addEventListener("mousemove", onMouseMove);
       window.addEventListener("mouseup", onMouseUp);
-    } else {
+    }
+		return () => {
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseup", onMouseUp);
-    }
+		}
   }, [drugging]);
 
   // isMinimized・isMaximized が変更された時のイベント
