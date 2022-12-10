@@ -45,27 +45,27 @@ const RetroWindow = (props: RetroWindowProps) => {
 			// ウィンドウサイズを変更している場合
 			else if(windowMode === 'resizing') {
 
-				const left = innerWindow.current.style.left;
-				const top = innerWindow.current.style.top;
-				const width = innerWindow.current.style.width;
-				const height = innerWindow.current.style.height;
+				const left = innerWindow.current.offsetLeft;
+				const top = innerWindow.current.offsetTop;
+				const width = innerWindow.current.offsetWidth;
+				const height = innerWindow.current.offsetHeight;
 
 				if(resizeMode.includes('left')) {
-					innerWindow.current.style.left = `${event.pageX}px`;
-					innerWindow.current.style.width = `calc(${left} + ${width} - ${event.pageX}px)`;
+					innerWindow.current.style.left = `${Math.min(event.pageX, left + width - props.window.minSize.width)}px`;
+					innerWindow.current.style.width = `${Math.max(left + width - event.pageX, props.window.minSize.width)}px`;
 				}
 
 				if(resizeMode.includes('right')) {
-					innerWindow.current.style.width = `calc(${event.pageX}px - ${left})`;
+					innerWindow.current.style.width = `${Math.max(event.pageX - left, props.window.minSize.width)}px`;
 				}
 
 				if(resizeMode.includes('above')) {
-					innerWindow.current.style.top = `${event.pageY}px`;
-					innerWindow.current.style.height = `calc(${top} + ${height} - ${event.pageY}px)`;
+					innerWindow.current.style.top = `${Math.min(event.pageY, top + height - props.window.minSize.height)}px`;
+					innerWindow.current.style.height = `${Math.max(top + height - event.pageY, props.window.minSize.height)}px`;
 				}
 
 				if(resizeMode.includes('below')) {
-					innerWindow.current.style.height = `calc(${event.pageY}px - ${top})`;
+					innerWindow.current.style.height = `${Math.max(event.pageY - top, props.window.minSize.height)}px`;
 				}
 
 			}
@@ -201,7 +201,7 @@ const RetroWindow = (props: RetroWindowProps) => {
         innerWindow.current.style.top = `${props.window.pos.y}px`;
       }
     }
-  }, [props.window.isMinimized, props.window.isMaximized, data]);
+  }, [props.window.isMinimized, props.window.isMaximized]);
 
   // ウィンドウを描画
   return (
