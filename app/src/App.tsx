@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { WindowContext } from "@/context/window";
 import { RetroWindow } from "@/components/window";
+import { TerminalPreview } from "@/components/preview";
 import Styles from "./App.module.scss";
 import type { ManagedWindow } from "@/@types/window";
 import { createWindow } from "@/libs/createWindow";
@@ -53,6 +54,7 @@ const App = () => {
       <PromptContext value={{ promptList, setPromptList }}>
         <ColorContext value={{ colors, setColors }}>
           <Logo />
+          <TerminalPreview />
           <div className={Styles.app}>{windows}</div>
           <div className={Styles.taskbar}>{minimizedWindows}</div>
         </ColorContext>
