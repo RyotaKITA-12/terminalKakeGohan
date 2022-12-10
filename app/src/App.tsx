@@ -1,35 +1,49 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "./assets/vite.svg";
-import "./App.css";
+import { useEffect, useState } from "react";
+import { WindowContext } from "@/context/window";
+import { generateUuid } from "@/libs/uuid";
+import { RetroWindow } from "@/components/window";
+import Styles from "./App.module.scss";
+import type { ReactNode } from "react";
+import type { Window, ManagedWindow } from "@/@types/window";
 
-function App() {
-  const [count, setCount] = useState(0);
+const App = () => {
+  const [data, setWindow] = useState<ManagedWindow>({});
+  const createWindow = (title: string, child: ReactNode): Window => {
+    return {
+      id: generateUuid(),
+      isClosable: false,
+      isMinimized: false,
+      isMaximized: false,
+      pos: { x: 0, y: 0 },
+      size: { width: 300, height: 300 },
+      title,
+      child,
+    };
+  };
+
+  useEffect(() => {
+    const ColorPicker = createWindow("COLORS", <></>);
+    const Output = createWindow("OUTPUT", <></>);
+    const Appearance = createWindow("APPEARANCES", <></>);
+    const Inspector = createWindow("INSPECTOR", <></>);
+    const window: ManagedWindow = {};
+    window[ColorPicker.id] = ColorPicker;
+    window[Output.id] = Output;
+    window[Appearance.id] = Appearance;
+    window[Inspector.id] = Inspector;
+    setWindow(window);
+  }, [0]);
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <WindowContext value={{ data: data, setWindowContext: setWindow }}>
+      <div className={Styles.app}>
+        {Object.keys(data).map((key) => {
+          const value = data[key];
+          return <RetroWindow window={value} key={value.id} />;
+        })}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
+    </WindowContext>
   );
-}
+};
 
 export default App;

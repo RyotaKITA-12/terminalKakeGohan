@@ -12,3 +12,6 @@ type Window = {
   size: Size;
   child: ReactNode;
 };
+type ManagedWindow = {
+  [key: string]: Window;
+};
