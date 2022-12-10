@@ -1,9 +1,9 @@
 import { createContext, ReactNode } from "react";
-import { Window } from "@/@types/window";
+import type { ManagedWindow } from "@/@types/window";
 
 type context = {
-  data?: { [key: string]: Window };
-  setWindowContext?: (data: { [key: string]: Window }) => void;
+  data?: ManagedWindow;
+  setWindowContext?: (data: ManagedWindow) => void;
 };
 
 export const windowContext = createContext<context>({});
