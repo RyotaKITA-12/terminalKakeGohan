@@ -128,48 +128,46 @@ const RetroWindow = (props: RetroWindowProps) => {
   };
 
   // 最小化する時のイベント
-  const onMinimize: MouseEventHandler<HTMLButtonElement> = event => {
-		event.stopPropagation();
-		setDrugging(false);
-    if(!props.window.isMinimized) {
-        props.window.isMinimized = true;
-        props.window.isMaximized = false;
-    }
-    else {
+  const onMinimize: MouseEventHandler<HTMLButtonElement> = (event) => {
+    event.stopPropagation();
+    setDrugging(false);
+    if (!props.window.isMinimized) {
+      props.window.isMinimized = true;
+      props.window.isMaximized = false;
+    } else {
       props.window.isMinimized = false;
     }
-		if (setWindowContext) {
-			setWindowContext({ [props.window.id]: props.window, ...data });
-		}
-  }
+    if (setWindowContext) {
+      setWindowContext({ [props.window.id]: props.window, ...data });
+    }
+  };
 
   // 最大化する時のイベント
-  const onMaximize: MouseEventHandler<HTMLButtonElement> = event => {
-		event.stopPropagation();
-		setDrugging(false);
-    if(!props.window.isMaximized) {
-			props.window.isMaximized = true;
+  const onMaximize: MouseEventHandler<HTMLButtonElement> = (event) => {
+    event.stopPropagation();
+    setDrugging(false);
+    if (!props.window.isMaximized) {
+      props.window.isMaximized = true;
       props.window.isMinimized = false;
-    }
-    else {
+    } else {
       props.window.isMaximized = false;
     }
-		if (setWindowContext) {
-			setWindowContext({ [props.window.id]: props.window, ...data });
-		}
-  }
+    if (setWindowContext) {
+      setWindowContext({ [props.window.id]: props.window, ...data });
+    }
+  };
 
-	// ウィンドウを追放する時のイベント
-	const onVanish: MouseEventHandler<HTMLButtonElement> = event => {
-		event.stopPropagation();
-		setDrugging(false);
-		if(props.window.isClosable) {
-			if (data && setWindowContext) {
-				const { [props.window.id]: _removed, ...rest } = data;
-				setWindowContext(rest);
-			}
-		}
-	}
+  // ウィンドウを追放する時のイベント
+  const onVanish: MouseEventHandler<HTMLButtonElement> = (event) => {
+    event.stopPropagation();
+    setDrugging(false);
+    if (props.window.isClosable) {
+      if (data && setWindowContext) {
+        delete data[props.window.id];
+        setWindowContext({ ...data });
+      }
+    }
+  };
 
   // drugging が変更された時の副作用を設定
   useEffect(() => {
@@ -177,42 +175,28 @@ const RetroWindow = (props: RetroWindowProps) => {
       window.addEventListener("mousemove", onMouseMove);
       window.addEventListener("mouseup", onMouseUp);
     }
-		return () => {
+    return () => {
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseup", onMouseUp);
-		}
+    };
   }, [drugging]);
 
   // isMinimized・isMaximized が変更された時のイベント
   useEffect(() => {
     if (innerWindow.current) {
-
-			// ウィンドウが最小化されているならば
-      if(props.window.isMinimized) {
-				let stackid = 0;
-				if(data) {
-					const values = Object.values(data);
-					const index = values.findIndex((v,i,a)=>v.id===props.window.id);
-					stackid = values.slice(0, index).reduce((p,c,i,a)=> p + (c.isMinimized ? 1 : 0), 0);
-				}
-        innerWindow.current.style.width = '300px';
-        innerWindow.current.style.height = '27px';
-        innerWindow.current.style.left = 'calc(100vw - 300px)';
-        innerWindow.current.style.top = `calc(100vh - ${27 * (stackid + 1)}px)`;
-      }
-
-			// ウィンドウが最大化されているならば
-      else if(props.window.isMaximized) {
-        innerWindow.current.style.width = '100vw';
-        innerWindow.current.style.height = '100vh';
+      innerWindow.current.style.position = props.window.isMinimized
+        ? "unset"
+        : "fixed";
+      if (props.window.isMaximized) {
+        innerWindow.current.style.width = "100vw";
+        innerWindow.current.style.height = "100vh";
         innerWindow.current.style.left = `0px`;
         innerWindow.current.style.top = `0px`;
-      }
-			
-			// それ以外の場合
-      else {
+      } else {
         innerWindow.current.style.width = `${props.window.size.width}px`;
-        innerWindow.current.style.height = `${props.window.size.height}px`;
+        innerWindow.current.style.height = props.window.isMinimized
+          ? "unset"
+          : `${props.window.size.height}px`;
         innerWindow.current.style.left = `${props.window.pos.x}px`;
         innerWindow.current.style.top = `${props.window.pos.y}px`;
       }
@@ -231,7 +215,7 @@ const RetroWindow = (props: RetroWindowProps) => {
           <button aria-label="Close" onMouseUp={onVanish}/>
         </div>
       </div>
-      {!props.window.isMinimized && (
+      {props.window.isMinimized || (
         <div className="window-body">{props.window.child}</div>
       )}
 			{(!props.window.isMaximized && !props.window.isMinimized) && (

@@ -4,33 +4,44 @@ import { RetroWindow } from "@/components/window";
 import Styles from "./App.module.scss";
 import type { ManagedWindow } from "@/@types/window";
 import { createWindow } from "@/libs/createWindow";
+import { Prompt } from "@/components/prompt/Prompt";
+import { PromptContext } from "@/context/prompt";
+import { TPromptList } from "@/@types/prompt";
 
 const App = () => {
   const [data, setWindow] = useState<ManagedWindow>({});
-
+  const [promptList, setPromptList] = useState<TPromptList>([]);
   useEffect(() => {
     const ColorPicker = createWindow("COLORS", <></>);
     const Output = createWindow("OUTPUT", <></>);
-    const Appearance = createWindow("APPEARANCES", <></>);
+    const Prompts = createWindow("PROMPTS", <Prompt />, {
+      width: 400,
+      height: 400,
+    });
     const Inspector = createWindow("INSPECTOR", <></>);
     const window: ManagedWindow = {};
     window[ColorPicker.id] = ColorPicker;
     window[Output.id] = Output;
-    window[Appearance.id] = Appearance;
+    window[Prompts.id] = Prompts;
     window[Inspector.id] = Inspector;
     setWindow(window);
   }, [0]);
-
+  const windows = [],
+    minimizedWindows = [];
+  for (const key of Object.keys(data).reverse()) {
+    const window = data[key];
+    if (window.isMinimized) {
+      minimizedWindows.push(<RetroWindow window={window} key={window.id} />);
+    } else {
+      windows.push(<RetroWindow window={window} key={window.id} />);
+    }
+  }
   return (
     <WindowContext value={{ data: data, setWindowContext: setWindow }}>
-      <div className={Styles.app}>
-        {Object.keys(data)
-          .reverse()
-          .map((key) => {
-            const value = data[key];
-            return <RetroWindow window={value} key={value.id} />;
-          })}
-      </div>
+      <PromptContext value={{ promptList, setPromptList }}>
+        <div className={Styles.app}>{windows}</div>
+        <div className={Styles.taskbar}>{minimizedWindows}</div>
+      </PromptContext>
     </WindowContext>
   );
 };
