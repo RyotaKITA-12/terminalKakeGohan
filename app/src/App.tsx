@@ -10,6 +10,7 @@ import { TPromptList } from "@/@types/prompt";
 import { Color } from "@/components/color/Color";
 import { ColorContext } from "@/context/color";
 import { defaultColors } from "@/definition/colors";
+import { Logo } from "@/components/logo/Logo";
 
 const App = () => {
   const [data, setWindow] = useState<ManagedWindow>({});
@@ -50,6 +51,7 @@ const App = () => {
     <WindowContext value={{ data: data, setWindowContext: setWindow }}>
       <PromptContext value={{ promptList, setPromptList }}>
         <ColorContext value={{ colors, setColors }}>
+          <Logo />
           <div className={Styles.app}>{windows}</div>
           <div className={Styles.taskbar}>{minimizedWindows}</div>
         </ColorContext>
