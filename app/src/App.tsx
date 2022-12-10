@@ -19,6 +19,8 @@ const App = () => {
     const ColorPicker = createWindow("COLORS", <Color />, {
       width: 260,
       height: 200,
+      minWidth: 260,
+      minHeight: 200,
     });
     const Output = createWindow("OUTPUT", <></>);
     const Prompts = createWindow("PROMPTS", <Prompt />, {
