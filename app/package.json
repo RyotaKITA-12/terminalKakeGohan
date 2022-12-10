@@ -15,6 +15,7 @@
     "copy-files": "npx rimraf build/electron/html&&vite build",
     "check-types": "npx tsc --noEmit",
     "electron:dev": "concurrently \"vite\" \"tsc -p electron -w\" \"tsc -p electron && electron --unhandled-rejections=strict .\"",
+    "dev:front": "vite",
     "eslint": "eslint {src,electron}/**/*.ts*",
     "eslint:fix": "eslint {src,electron}/**/*.ts* --fix",
     "lint": "npm run eslint&&npm run check-types",
