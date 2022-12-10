@@ -1,6 +1,77 @@
-.inner_window {
+.inner-window {
   position: fixed;
   width: 200px;
   top: 100px;
   left: 100px;
+}
+
+.resize-area {
+
+  position: absolute;
+  display: block;
+
+  &.area-above, &.area-below {
+    cursor: ns-resize;
+    width: 100%;
+    height: 8px;
+  }
+
+  &.area-left, &.area-right {
+    cursor: ew-resize;
+    width: 8px;
+    height: 100%;
+  }
+
+  &.area-left-above, &.area-right-below {
+    cursor: nwse-resize;
+    width: 8px;
+    height: 8px;
+  }
+
+  &.area-right-above, &.area-left-below {
+    cursor: nesw-resize;
+    width: 8px;
+    height: 8px;
+  }
+
+  &.area-above {
+    left: 0px;
+    top: -2.8px;
+  }
+
+  &.area-below {
+    left: 0px;
+    top: calc(100% - 2.8px);
+  }
+
+  &.area-left {
+    left: -2.8px;
+    top: 0px;
+  }
+
+  &.area-right {
+    left: calc(100% - 2.8px);
+    top: 0px;
+  }
+
+  &.area-left-above {
+    left: -2.8px;
+    top: -2.8px;
+  }
+
+  &.area-right-above {
+    left: calc(100% - 2.8px);
+    top: -2.8px;
+  }
+
+  &.area-left-below {
+    left: -2.8px;
+    top: calc(100% - 2.8px);
+  }
+
+  &.area-right-below {
+    left: calc(100% - 2.8px);
+    top: calc(100% - 2.8px);
+  }
+
 }
