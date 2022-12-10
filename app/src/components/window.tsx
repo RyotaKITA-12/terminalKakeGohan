@@ -1,4 +1,4 @@
-import React from "react";
+import { useContext, useState, useRef, useCallback, useEffect, MouseEventHandler } from "react";
 import { windowContext } from "@/context/window";
 import { Window } from "@/@types/window";
 import Styles from "./window.module.scss";
@@ -11,17 +11,17 @@ type RetroWindowProps = {
 // ウィンドウのコンポーネント
 const RetroWindow = (props: RetroWindowProps) => {
   // Context の設定
-  const { data, setWindowContext } = React.useContext(windowContext);
+  const { data, setWindowContext } = useContext(windowContext);
 
   // ウィンドウの状態
-  const [drugging, setDrugging] = React.useState(false);
-  const [drugoffset, setDrugOffset] = React.useState({ x: 0, y: 0 });
+  const [drugging, setDrugging] = useState(false);
+  const [drugoffset, setDrugOffset] = useState({ x: 0, y: 0 });
 
   // ウィンドウに対する参照
-  const innerWindow = React.useRef<HTMLDivElement>(null);
+  const innerWindow = useRef<HTMLDivElement>(null);
 
   // タイトルバーがドラッグされている時のイベント
-  const onMouseMove = React.useCallback(
+  const onMouseMove = useCallback(
     (event: MouseEvent) => {
       if (innerWindow.current) {
         innerWindow.current.style.left = `${event.pageX + drugoffset.x}px`;
@@ -32,7 +32,7 @@ const RetroWindow = (props: RetroWindowProps) => {
   );
 
   // タイトルバーがクリックされた時のイベント
-  const onMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const onMouseDown:MouseEventHandler<HTMLDivElement> = (event) => {
     if (innerWindow.current) {
       const rect = innerWindow.current.getBoundingClientRect();
       setDrugOffset({ x: rect.left - event.pageX, y: rect.top - event.pageY });
@@ -55,23 +55,20 @@ const RetroWindow = (props: RetroWindowProps) => {
   };
 
   // drugging が変更された時の副作用を設定
-  React.useEffect(() => {
+  useEffect(() => {
     if (drugging) {
       window.addEventListener("mousemove", onMouseMove);
     } else {
       window.removeEventListener("mousemove", onMouseMove);
     }
   }, [drugging]);
-  
-  React.useEffect(() => {
+
+  // ウィンドウ全体に対してイベントリスナーを追加
+  useEffect(() => {
     if (innerWindow.current) {
       innerWindow.current.style.left = `${props.window.pos.x}px`;
       innerWindow.current.style.top = `${props.window.pos.y}px`;
     }
-  }, [0]);
-
-  // ウィンドウ全体に対してイベントリスナーを追加
-  React.useEffect(() => {
   	window.addEventListener("mouseup", onMouseUp);
   }, [0]);
 
