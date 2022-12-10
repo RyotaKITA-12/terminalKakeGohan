@@ -40,14 +40,18 @@ const RetroWindow = (props: RetroWindowProps) => {
 
   // タイトルバーがクリックされた時のイベント
   const onMouseDown: MouseEventHandler<HTMLDivElement> = (event) => {
-		if(!props.window.isMinimized && !props.window.isMaximized) {
+		if(!props.window.isMinimized) {
 			if (innerWindow.current && data) {
 				const rect = innerWindow.current.getBoundingClientRect();
 				if (setWindowContext)
 					setWindowContext({ [props.window.id]: props.window, ...data });
 
-				setDrugOffset({ x: rect.left - event.pageX, y: rect.top - event.pageY });
+				if(!props.window.isMaximized) {
+					setDrugOffset({ x: rect.left - event.pageX, y: rect.top - event.pageY });
+				}
 				setDrugging(true);
+
+				props.window.isMaximized = false;
 			}
 		}
   };
@@ -144,8 +148,8 @@ const RetroWindow = (props: RetroWindowProps) => {
         <div className="title-bar-text" style={{userSelect:'none'}}>{props.window.title}</div>
         <div className="title-bar-controls">
           <button aria-label="Minimize" onMouseUp={onMinimize}/>
-          {!props.window.isMaximized && <button aria-label="Maximize" onMouseUp={onMaximize}/>}
-          {props.window.isMaximized && <button aria-label="Restorec" onMouseUp={onMaximize}/>}
+          {!props.window.isMaximized && <button aria-label="Maximize" onMouseDown={event=>event.stopPropagation()} onMouseUp={onMaximize}/>}
+          {props.window.isMaximized && <button aria-label="Restore" onMouseDown={event=>event.stopPropagation()} onMouseUp={onMaximize}/>}
           <button aria-label="Close" />
         </div>
       </div>
