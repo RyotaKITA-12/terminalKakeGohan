@@ -1,6 +1,4 @@
 import type { ReactNode } from "react";
-import type { Position } from "@/@types/position";
-import type { Size } from "@/@types/size";
 
 type Window = {
   id: string;

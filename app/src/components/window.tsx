@@ -45,8 +45,8 @@ const RetroWindow = (props: RetroWindowProps) => {
     setDrugging(false);
     if (innerWindow.current) {
       props.window.pos = {
-        x: innerWindow.current.style.left,
-        y: innerWindow.current.style.top,
+        x: Number(innerWindow.current.style.left),
+        y: Number(innerWindow.current.style.top),
       };
       if (setWindowContext) {
         setWindowContext({ ...data, [props.window.id]: props.window });
@@ -69,7 +69,8 @@ const RetroWindow = (props: RetroWindowProps) => {
       innerWindow.current.style.left = `${props.window.pos.x}px`;
       innerWindow.current.style.top = `${props.window.pos.y}px`;
     }
-  	window.addEventListener("mouseup", onMouseUp);
+  	
+    window.addEventListener("mouseup", onMouseUp);
   }, [0]);
 
   // ウィンドウを描画

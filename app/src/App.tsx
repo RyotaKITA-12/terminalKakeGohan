@@ -1,25 +1,12 @@
 import { useEffect, useState } from "react";
 import { WindowContext } from "@/context/window";
-import { generateUuid } from "@/libs/uuid";
 import { RetroWindow } from "@/components/window";
 import Styles from "./App.module.scss";
-import type { ReactNode } from "react";
-import type { Window, ManagedWindow } from "@/@types/window";
+import type { ManagedWindow } from "@/@types/window";
+import { createWindow } from "@/libs/createWindow";
 
 const App = () => {
   const [data, setWindow] = useState<ManagedWindow>({});
-  const createWindow = (title: string, child: ReactNode): Window => {
-    return {
-      id: generateUuid(),
-      isClosable: false,
-      isMinimized: false,
-      isMaximized: false,
-      pos: { x: 0, y: 0 },
-      size: { width: 300, height: 300 },
-      title,
-      child,
-    };
-  };
 
   useEffect(() => {
     const ColorPicker = createWindow("COLORS", <></>);
