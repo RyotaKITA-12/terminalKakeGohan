@@ -12,6 +12,8 @@ const createWindow = (
     height?: number;
     minWidth?: number;
     minHeight?: number;
+    posX?: number;
+    posY?: number;
   }
 ): Window => {
   return {
@@ -19,7 +21,7 @@ const createWindow = (
     isClosable: data?.closable || false,
     isMinimized: false,
     isMaximized: false,
-    pos: { x: 0, y: 0 },
+    pos: { x: data?.posX || 0, y: data?.posY || 0 },
     size: { width: data?.width || 300, height: data?.height || 300 },
     minSize: { width: data?.minWidth || 300, height: data?.minHeight || 300 },
     title,
