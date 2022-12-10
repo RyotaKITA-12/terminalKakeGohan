@@ -3,8 +3,7 @@ import { WindowContext } from "@/context/window";
 import { generateUuid } from "@/libs/uuid";
 import Styles from "./App.module.scss";
 import type { ReactNode } from "react";
-import type { Window } from "@/@types/window";
-import type { ManagedWindow } from "@/@types/window";
+import type { Window, ManagedWindow } from "@/@types/window";
 
 const App = () => {
   const [data, setWindow] = useState<ManagedWindow>({});
