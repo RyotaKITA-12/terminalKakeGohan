@@ -104,6 +104,18 @@ const RetroWindow = (props: RetroWindowProps) => {
 		}
   }
 
+	// ウィンドウを追放する時のイベント
+	const onVanish: MouseEventHandler<HTMLButtonElement> = event => {
+		event.stopPropagation();
+		setDrugging(false);
+		if(props.window.isClosable) {
+			if (data && setWindowContext) {
+				const { [props.window.id]: _removed, ...rest } = data;
+				setWindowContext(rest);
+			}
+		}
+	}
+
   // drugging が変更された時の副作用を設定
   useEffect(() => {
     if (drugging) {
@@ -150,7 +162,7 @@ const RetroWindow = (props: RetroWindowProps) => {
           <button aria-label="Minimize" onMouseUp={onMinimize}/>
           {!props.window.isMaximized && <button aria-label="Maximize" onMouseDown={event=>event.stopPropagation()} onMouseUp={onMaximize}/>}
           {props.window.isMaximized && <button aria-label="Restore" onMouseDown={event=>event.stopPropagation()} onMouseUp={onMaximize}/>}
-          <button aria-label="Close" />
+          <button aria-label="Close" onMouseUp={onVanish}/>
         </div>
       </div>
       {!props.window.isMinimized && (
