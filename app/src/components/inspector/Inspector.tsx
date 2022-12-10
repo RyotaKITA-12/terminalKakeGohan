@@ -14,6 +14,7 @@ const Inspector = () => {
   const { colors, setColors } = useContext(colorContext);
   const { promptList, setPromptList } = useContext(promptContext);
   const { data, setWindowContext } = useContext(windowContext);
+  const [profiles, setProfiles] = useState<TProfile[]>([]);
   if (
     !setColors ||
     !colors ||
@@ -23,11 +24,9 @@ const Inspector = () => {
     !setWindowContext
   )
     return <></>;
-  let profiles: TProfile[] = [];
   const onClickAdd = () => {
-    profiles.push({ ...defaultProfile, id: generateUuid() });
+    setProfiles([...profiles, { ...defaultProfile, id: generateUuid() }]);
   };
-  onClickAdd();
   const onClickLoad = () => {
     const target = profiles.filter((val) => val.id === selectedProfile);
     if (target.length < 1) return;
@@ -35,24 +34,43 @@ const Inspector = () => {
     setPromptList(target[0].prompt);
   };
   const onClickRemove = () => {
-    profiles = profiles.filter((val) => val.id !== selectedProfile);
+    setProfiles(profiles.filter((val) => val.id !== selectedProfile));
   };
   const onClickSave = () => {
     const target = profiles.filter((val) => val.id === selectedProfile);
     if (target.length < 1) return;
     target[0].prompt = promptList;
     target[0].color = colors;
+    setProfiles([...profiles]);
   };
   const onClickRename = () => {
     const uuid = generateUuid();
-    const rename = createWindow("名前変更", <Rename id={uuid} />, {
-      uuid,
-      closable: true,
-      width: 200,
-      height: 60,
-    });
+    const target =
+      selectedProfile === ""
+        ? profiles
+        : profiles.filter((val) => val.id === selectedProfile);
+    if (target.length < 1) return;
+    const rename = createWindow(
+      "名前変更",
+      <Rename
+        id={uuid}
+        value={target[0].name}
+        onChange={(val) => {
+          target[0].name = val;
+        }}
+      />,
+      {
+        uuid,
+        closable: true,
+        width: 200,
+        height: 60,
+      }
+    );
     setWindowContext({ [uuid]: rename, ...data });
   };
+  if (selectedProfile === "" && profiles.length > 0) {
+    setSelectedProfile(profiles[0].id);
+  }
   return (
     <div className={Styles.wrapper}>
       <select
