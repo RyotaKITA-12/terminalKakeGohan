@@ -11,7 +11,6 @@ import { TPromptList } from "@/@types/prompt";
 const App = () => {
   const [data, setWindow] = useState<ManagedWindow>({});
   const [promptList, setPromptList] = useState<TPromptList>([]);
-  //console.log(data);
   useEffect(() => {
     const ColorPicker = createWindow("COLORS", <></>);
     const Output = createWindow("OUTPUT", <></>);
