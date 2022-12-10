@@ -1,11 +1,16 @@
 import { createContext, ReactNode } from "react";
 import { Window } from "@/@types/window";
 
-export const windowContext = createContext<Window[]>([]);
+type context = {
+  data?: Window[];
+  setWindowContext?: (data: Window[]) => void;
+};
+
+export const windowContext = createContext<context>({});
 
 type contextProps = {
   children: ReactNode;
-  value?: Window[];
+  value?: context;
 };
 
 /**
@@ -14,7 +19,7 @@ type contextProps = {
  */
 const WindowContext = (props: contextProps): JSX.Element => {
   return (
-    <windowContext.Provider value={props.value || []}>
+    <windowContext.Provider value={props.value || {}}>
       {props.children}
     </windowContext.Provider>
   );
