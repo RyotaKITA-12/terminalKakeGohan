@@ -24,6 +24,11 @@ input[type="reset"]:not(:disabled):active,
 input[type="submit"]:not(:disabled):active {
   padding: unset !important;
 }
+
+input[type="number"]{
+  -webkit-appearance: inner-spin-button!important;
+  margin: 0;
+}
 .window {
   display: flex;
   flex-direction: column;

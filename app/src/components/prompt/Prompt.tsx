@@ -65,7 +65,7 @@ const Prompt = () => {
         {promptList.map((prompt, index) => {
           return (
             <option key={index} value={index}>
-              {prompt.value}({prompt.name})
+              {prompt.name} ({prompt.value})
             </option>
           );
         })}

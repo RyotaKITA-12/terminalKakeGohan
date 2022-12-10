@@ -1,0 +1,26 @@
+.wrapper{
+  .row{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    .item{
+      flex: 1;
+      .form{
+        position: relative;
+        .fieldText{
+          background-color: #c0c0c0;
+          position: absolute;
+          top: -9px;
+          padding: 0 2px;
+        }
+        &>div{
+          display: flex;
+          justify-content: space-evenly;
+          .input{
+            width: 40px;
+          }
+        }
+      }
+    }
+  }
+}

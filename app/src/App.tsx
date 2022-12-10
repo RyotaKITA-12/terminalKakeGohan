@@ -7,12 +7,13 @@ import { createWindow } from "@/libs/createWindow";
 import { Prompt } from "@/components/prompt/Prompt";
 import { PromptContext } from "@/context/prompt";
 import { TPromptList } from "@/@types/prompt";
+import {Color} from "@/components/color/Color";
 
 const App = () => {
   const [data, setWindow] = useState<ManagedWindow>({});
   const [promptList, setPromptList] = useState<TPromptList>([]);
   useEffect(() => {
-    const ColorPicker = createWindow("COLORS", <></>);
+    const ColorPicker = createWindow("COLORS", <Color/>);
     const Output = createWindow("OUTPUT", <></>);
     const Prompts = createWindow("PROMPTS", <Prompt />, {
       width: 400,
