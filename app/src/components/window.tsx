@@ -113,12 +113,12 @@ const RetroWindow = (props: RetroWindowProps) => {
 				setDrugging(false);
 				setWindowMode('staying');
 				props.window.pos = {
-					x: Number(innerWindow.current.style.left.slice(0, -2)),
-					y: Number(innerWindow.current.style.top.slice(0, -2)),
+					x: innerWindow.current.offsetLeft,
+					y: innerWindow.current.offsetTop,
 				};
 				props.window.size = {
-					width: Number(innerWindow.current.style.width.slice(0, -2)),
-					height: Number(innerWindow.current.style.height.slice(0, -2)),
+					width: innerWindow.current.offsetWidth,
+					height: innerWindow.current.offsetHeight,
 				};
 				if (setWindowContext) {
 					setWindowContext({ [props.window.id]: props.window, ...data });
