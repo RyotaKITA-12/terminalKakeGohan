@@ -23,7 +23,6 @@ const App = () => {
       minWidth: 260,
       minHeight: 200,
     });
-    const Output = createWindow("OUTPUT", <></>);
     const Prompts = createWindow("PROMPTS", <Prompt />, {
       width: 400,
       height: 400,
@@ -32,7 +31,6 @@ const App = () => {
     const Inspector = createWindow("INSPECTOR", <></>);
     const window: ManagedWindow = {};
     window[ColorPicker.id] = ColorPicker;
-    window[Output.id] = Output;
     window[Prompts.id] = Prompts;
     window[Inspector.id] = Inspector;
     setWindow(window);
