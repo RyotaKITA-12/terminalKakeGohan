@@ -14,12 +14,13 @@ const createWindow = (
     minHeight?: number;
     posX?: number;
     posY?: number;
+    minimized?: boolean;
   }
 ): Window => {
   return {
     id: data?.uuid || generateUuid(),
     isClosable: data?.closable || false,
-    isMinimized: false,
+    isMinimized: data?.minimized || false,
     isMaximized: false,
     pos: { x: data?.posX || 0, y: data?.posY || 0 },
     size: { width: data?.width || 300, height: data?.height || 300 },

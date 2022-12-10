@@ -22,11 +22,13 @@ const App = () => {
       height: 200,
       minWidth: 260,
       minHeight: 200,
+      minimized: true,
     });
     const Prompts = createWindow("PROMPTS", <Prompt />, {
       width: 400,
       height: 400,
       minWidth: 350,
+      minimized: true,
     });
     const Inspector = createWindow("INSPECTOR", <></>);
     const window: ManagedWindow = {};
