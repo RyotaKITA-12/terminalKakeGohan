@@ -1,6 +1,7 @@
 import React from "react";
 import { windowContext } from "@/context/window";
 import { Window } from "@/@types/window";
+import Styles from "./window.module.scss";
 
 // ウィンドウのプロパティ
 type RetroWindowProps = {
@@ -57,18 +58,19 @@ const RetroWindow = (props: RetroWindowProps) => {
   React.useEffect(() => {
     if (drugging) {
       window.addEventListener("mousemove", onMouseMove);
-    }
-    if (!drugging) {
+    } else {
       window.removeEventListener("mousemove", onMouseMove);
     }
-  });
+  }, [drugging]);
 
   // ウィンドウ全体に対してイベントリスナーを追加
-  window.addEventListener("mouseup", onMouseUp);
+  React.useEffect(() => {
+  	window.addEventListener("mouseup", onMouseUp);
+	}, [0]);
 
   // ウィンドウを描画
   return (
-    <div className="window tkg-window" ref={innerWindow}>
+    <div className={`window ${Styles.inner_window}`} ref={innerWindow}>
       <div className="title-bar" onMouseDown={onMouseDown}>
         <div className="title-bar-text">{props.window.title}</div>
         <div className="title-bar-controls">
