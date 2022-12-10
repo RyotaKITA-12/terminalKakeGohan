@@ -70,6 +70,7 @@ const RetroWindow = (props: RetroWindowProps) => {
 
   // 最小化する時のイベント
   const onMinimize: MouseEventHandler<HTMLButtonElement> = () => {
+		setDrugging(false);
     if(!props.window.isMinimized) {
         props.window.isMinimized = true;
         props.window.isMaximized = false;
@@ -84,6 +85,7 @@ const RetroWindow = (props: RetroWindowProps) => {
 
   // 最大化する時のイベント
   const onMaximize: MouseEventHandler<HTMLButtonElement> = () => {
+		setDrugging(false);
     if(!props.window.isMaximized) {
 			props.window.isMaximized = true;
       props.window.isMinimized = false;
@@ -138,8 +140,8 @@ const RetroWindow = (props: RetroWindowProps) => {
       <div className="title-bar" onMouseDown={onMouseDown}>
         <div className="title-bar-text" style={{userSelect:'none'}}>{props.window.title}</div>
         <div className="title-bar-controls">
-          <button aria-label="Minimize" onClick={onMinimize}/>
-          <button aria-label="Maximize" onClick={onMaximize}/>
+          <button aria-label="Minimize" onMouseUp={onMinimize}/>
+          <button aria-label="Maximize" onMouseUp={onMaximize}/>
           <button aria-label="Close" />
         </div>
       </div>
