@@ -39,7 +39,7 @@ const App = () => {
       <div className={Styles.app}>
         {Object.keys(data).map((key) => {
           const value = data[key];
-          return <RetroWindow window={value} />;
+          return <RetroWindow window={value} key={value.id} />;
         })}
       </div>
     </WindowContext>
