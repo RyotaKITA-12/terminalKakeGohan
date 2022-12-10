@@ -24,10 +24,12 @@ const App = () => {
   return (
     <WindowContext value={{ data: data, setWindowContext: setWindow }}>
       <div className={Styles.app}>
-        {Object.keys(data).map((key) => {
-          const value = data[key];
-          return <RetroWindow window={value} key={value.id} />;
-        })}
+        {Object.keys(data)
+          .reverse()
+          .map((key) => {
+            const value = data[key];
+            return <RetroWindow window={value} key={value.id} />;
+          })}
       </div>
     </WindowContext>
   );

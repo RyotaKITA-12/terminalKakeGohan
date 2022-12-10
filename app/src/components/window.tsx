@@ -1,4 +1,11 @@
-import { useContext, useState, useRef, useCallback, useEffect, MouseEventHandler } from "react";
+import {
+  useContext,
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  MouseEventHandler,
+} from "react";
 import { windowContext } from "@/context/window";
 import { Window } from "@/@types/window";
 import Styles from "./window.module.scss";
@@ -32,9 +39,12 @@ const RetroWindow = (props: RetroWindowProps) => {
   );
 
   // タイトルバーがクリックされた時のイベント
-  const onMouseDown:MouseEventHandler<HTMLDivElement> = (event) => {
-    if (innerWindow.current) {
+  const onMouseDown: MouseEventHandler<HTMLDivElement> = (event) => {
+    if (innerWindow.current && data) {
       const rect = innerWindow.current.getBoundingClientRect();
+      if (setWindowContext)
+        setWindowContext({ [props.window.id]: props.window, ...data });
+
       setDrugOffset({ x: rect.left - event.pageX, y: rect.top - event.pageY });
       setDrugging(true);
     }
@@ -42,14 +52,14 @@ const RetroWindow = (props: RetroWindowProps) => {
 
   // タイトルバーのドラッグが解除された時のイベント
   const onMouseUp = () => {
-    setDrugging(false);
-    if (innerWindow.current) {
+    if (innerWindow.current && drugging) {
+      setDrugging(false);
       props.window.pos = {
         x: Number(innerWindow.current.style.left),
         y: Number(innerWindow.current.style.top),
       };
       if (setWindowContext) {
-        setWindowContext({ ...data, [props.window.id]: props.window });
+        setWindowContext({ [props.window.id]: props.window, ...data });
       }
     }
   };
@@ -58,8 +68,10 @@ const RetroWindow = (props: RetroWindowProps) => {
   useEffect(() => {
     if (drugging) {
       window.addEventListener("mousemove", onMouseMove);
+      window.addEventListener("mouseup", onMouseUp);
     } else {
       window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
     }
   }, [drugging]);
 
@@ -69,8 +81,6 @@ const RetroWindow = (props: RetroWindowProps) => {
       innerWindow.current.style.left = `${props.window.pos.x}px`;
       innerWindow.current.style.top = `${props.window.pos.y}px`;
     }
-  	
-    window.addEventListener("mouseup", onMouseUp);
   }, [0]);
 
   // ウィンドウを描画
