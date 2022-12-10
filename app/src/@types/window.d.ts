@@ -8,6 +8,7 @@ type Window = {
   title: string;
   pos: Position;
   size: Size;
+  minSize: Size;
   child: ReactNode;
 };
 type ManagedWindow = {
