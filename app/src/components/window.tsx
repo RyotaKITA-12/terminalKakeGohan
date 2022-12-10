@@ -62,11 +62,18 @@ const RetroWindow = (props: RetroWindowProps) => {
       window.removeEventListener("mousemove", onMouseMove);
     }
   }, [drugging]);
+  
+  React.useEffect(() => {
+    if (innerWindow.current) {
+      innerWindow.current.style.left = `${props.window.pos.x}px`;
+      innerWindow.current.style.top = `${props.window.pos.y}px`;
+    }
+  }, [0]);
 
   // ウィンドウ全体に対してイベントリスナーを追加
   React.useEffect(() => {
   	window.addEventListener("mouseup", onMouseUp);
-	}, [0]);
+  }, [0]);
 
   // ウィンドウを描画
   return (
