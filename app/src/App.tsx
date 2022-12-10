@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { WindowContext } from "@/context/window";
 import { generateUuid } from "@/libs/uuid";
+import { RetroWindow } from "@/components/window";
 import Styles from "./App.module.scss";
 import type { ReactNode } from "react";
 import type { Window, ManagedWindow } from "@/@types/window";
@@ -36,10 +37,10 @@ const App = () => {
   return (
     <WindowContext value={{ data: data, setWindowContext: setWindow }}>
       <div className={Styles.app}>
-        {/*Object.keys(data).map((key)=>{
+        {Object.keys(data).map((key) => {
           const value = data[key];
-          return <></>//<Window window={value}/>
-        })*/}
+          return <RetroWindow window={value} />;
+        })}
       </div>
     </WindowContext>
   );
