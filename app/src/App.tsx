@@ -27,18 +27,21 @@ const App = () => {
     window[Inspector.id] = Inspector;
     setWindow(window);
   }, [0]);
-
+  const windows = [],
+    minimizedWindows = [];
+  for (const key of Object.keys(data).reverse()) {
+    const window = data[key];
+    if (window.isMinimized) {
+      minimizedWindows.push(<RetroWindow window={window} key={window.id} />);
+    } else {
+      windows.push(<RetroWindow window={window} key={window.id} />);
+    }
+  }
   return (
     <WindowContext value={{ data: data, setWindowContext: setWindow }}>
       <PromptContext value={{ promptList, setPromptList }}>
-        <div className={Styles.app}>
-          {Object.keys(data)
-            .reverse()
-            .map((key) => {
-              const value = data[key];
-              return <RetroWindow window={value} key={value.id} />;
-            })}
-        </div>
+        <div className={Styles.app}>{windows}</div>
+        <div className={Styles.taskbar}>{minimizedWindows}</div>
       </PromptContext>
     </WindowContext>
   );

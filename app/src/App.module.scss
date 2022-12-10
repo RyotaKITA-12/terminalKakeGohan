@@ -3,3 +3,11 @@
   height: 100vh;
   position: relative;
 }
+.taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+}

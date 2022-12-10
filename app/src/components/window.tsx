@@ -132,22 +132,19 @@ const RetroWindow = (props: RetroWindowProps) => {
   // isMinimized・isMaximized が変更された時のイベント
   useEffect(() => {
     if (innerWindow.current) {
-      if (props.window.isMinimized) {
-        const closedCount = data
-          ? Object.values(data).reduce((p, c) => p + (c.isMinimized ? 1 : 0), 0)
-          : 0;
-        innerWindow.current.style.width = `${props.window.size.width}px`;
-        innerWindow.current.style.height = "27px";
-        innerWindow.current.style.left = `calc(100vw - ${props.window.size.width}px)`;
-        innerWindow.current.style.top = `calc(100vh - ${27 * closedCount}px)`;
-      } else if (props.window.isMaximized) {
+      innerWindow.current.style.position = props.window.isMinimized
+        ? "unset"
+        : "fixed";
+      if (props.window.isMaximized) {
         innerWindow.current.style.width = "100vw";
         innerWindow.current.style.height = "100vh";
         innerWindow.current.style.left = `0px`;
         innerWindow.current.style.top = `0px`;
       } else {
         innerWindow.current.style.width = `${props.window.size.width}px`;
-        innerWindow.current.style.height = `${props.window.size.height}px`;
+        innerWindow.current.style.height = props.window.isMinimized
+          ? "unset"
+          : `${props.window.size.height}px`;
         innerWindow.current.style.left = `${props.window.pos.x}px`;
         innerWindow.current.style.top = `${props.window.pos.y}px`;
       }
@@ -163,24 +160,15 @@ const RetroWindow = (props: RetroWindowProps) => {
         </div>
         <div className="title-bar-controls">
           <button aria-label="Minimize" onMouseUp={onMinimize} />
-          {!props.window.isMaximized && (
-            <button
-              aria-label="Maximize"
-              onMouseDown={(event) => event.stopPropagation()}
-              onMouseUp={onMaximize}
-            />
-          )}
-          {props.window.isMaximized && (
-            <button
-              aria-label="Restore"
-              onMouseDown={(event) => event.stopPropagation()}
-              onMouseUp={onMaximize}
-            />
-          )}
+          <button
+            aria-label={props.window.isMaximized ? "Restore" : "Maximize"}
+            onMouseDown={(event) => event.stopPropagation()}
+            onMouseUp={onMaximize}
+          />
           <button aria-label="Close" onMouseUp={onVanish} />
         </div>
       </div>
-      {!props.window.isMinimized && (
+      {props.window.isMinimized || (
         <div className="window-body">{props.window.child}</div>
       )}
     </div>
