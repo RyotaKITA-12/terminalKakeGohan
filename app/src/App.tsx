@@ -7,13 +7,19 @@ import { createWindow } from "@/libs/createWindow";
 import { Prompt } from "@/components/prompt/Prompt";
 import { PromptContext } from "@/context/prompt";
 import { TPromptList } from "@/@types/prompt";
-import {Color} from "@/components/color/Color";
+import { Color } from "@/components/color/Color";
+import { ColorContext } from "@/context/color";
+import { defaultColors } from "@/definition/colors";
 
 const App = () => {
   const [data, setWindow] = useState<ManagedWindow>({});
   const [promptList, setPromptList] = useState<TPromptList>([]);
+  const [colors, setColors] = useState<TColors>(defaultColors);
   useEffect(() => {
-    const ColorPicker = createWindow("COLORS", <Color/>);
+    const ColorPicker = createWindow("COLORS", <Color />, {
+      width: 260,
+      height: 200,
+    });
     const Output = createWindow("OUTPUT", <></>);
     const Prompts = createWindow("PROMPTS", <Prompt />, {
       width: 400,
@@ -40,8 +46,10 @@ const App = () => {
   return (
     <WindowContext value={{ data: data, setWindowContext: setWindow }}>
       <PromptContext value={{ promptList, setPromptList }}>
-        <div className={Styles.app}>{windows}</div>
-        <div className={Styles.taskbar}>{minimizedWindows}</div>
+        <ColorContext value={{ colors, setColors }}>
+          <div className={Styles.app}>{windows}</div>
+          <div className={Styles.taskbar}>{minimizedWindows}</div>
+        </ColorContext>
       </PromptContext>
     </WindowContext>
   );
