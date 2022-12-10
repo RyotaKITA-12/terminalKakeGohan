@@ -1,4 +1,4 @@
-import Styles from "@/components/prompt/Prompt.module.scss";
+import Styles from "./Selector.module.scss";
 import { prompts } from "@/definition/prompts";
 import { useContext, useState } from "react";
 import { TPrompt } from "@/@types/prompt";
@@ -17,7 +17,7 @@ const Selector = ({ id }: { id: string }) => {
     setWindowContext({ ...data });
   };
   return (
-    <div>
+    <div className={Styles.wrapper}>
       <select size={20} className={Styles.select} value={selectedPrompt?.value}>
         {prompts.map((prompt, index) => {
           return (
