@@ -144,7 +144,8 @@ const RetroWindow = (props: RetroWindowProps) => {
         <div className="title-bar-text" style={{userSelect:'none'}}>{props.window.title}</div>
         <div className="title-bar-controls">
           <button aria-label="Minimize" onMouseUp={onMinimize}/>
-          <button aria-label="Maximize" onMouseUp={onMaximize}/>
+          {!props.window.isMaximized && <button aria-label="Maximize" onMouseUp={onMaximize}/>}
+          {props.window.isMaximized && <button aria-label="Restorec" onMouseUp={onMaximize}/>}
           <button aria-label="Close" />
         </div>
       </div>
