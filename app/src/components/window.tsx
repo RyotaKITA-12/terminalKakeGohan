@@ -10,6 +10,9 @@ import { windowContext } from "@/context/window";
 import { Window } from "@/@types/window";
 import Styles from "./window.module.scss";
 
+type WindowMode = 'staying'|'moving'|'resizing';
+type ResizeMode = 'left'|'right'|'above'|'below'|'leftabove'|'rightabove'|'leftbelow'|'rightbelow';
+
 // ウィンドウのプロパティ
 type RetroWindowProps = {
   window: Window;
@@ -23,56 +26,105 @@ const RetroWindow = (props: RetroWindowProps) => {
   // ウィンドウの状態
   const [drugging, setDrugging] = useState(false);
   const [drugoffset, setDrugOffset] = useState({ x: 0, y: 0 });
+	const [windowMode, setWindowMode] = useState<WindowMode>('staying');
+	const [resizeMode, setResizeMode] = useState<ResizeMode>('left');
 
   // ウィンドウに対する参照
   const innerWindow = useRef<HTMLDivElement>(null);
 
-  // タイトルバーがドラッグされている時のイベント
-  const onMouseMove = useCallback(
-    (event: MouseEvent) => {
-      if (innerWindow.current) {
-        innerWindow.current.style.left = `${event.pageX + drugoffset.x}px`;
-        innerWindow.current.style.top = `${event.pageY + drugoffset.y}px`;
-      }
-    },
-    [drugoffset]
-  );
+  // マウスが動いている時のイベント
+  const onMouseMove = (event: MouseEvent) => {
+		if (innerWindow.current) {
+
+			// ウィンドウが移動中の場合
+			if(windowMode === 'moving') {
+				innerWindow.current.style.left = `${event.pageX + drugoffset.x}px`;
+				innerWindow.current.style.top = `${event.pageY + drugoffset.y}px`;
+			}
+
+			// ウィンドウサイズを変更している場合
+			else if(windowMode === 'resizing') {
+
+				const left = innerWindow.current.style.left;
+				const top = innerWindow.current.style.top;
+				const width = innerWindow.current.style.width;
+				const height = innerWindow.current.style.height;
+
+				if(resizeMode.includes('left')) {
+					innerWindow.current.style.left = `${event.pageX}px`;
+					innerWindow.current.style.width = `calc(${left} + ${width} - ${event.pageX}px)`;
+				}
+
+				if(resizeMode.includes('right')) {
+					innerWindow.current.style.width = `calc(${event.pageX}px - ${left})`;
+				}
+
+				if(resizeMode.includes('above')) {
+					innerWindow.current.style.top = `${event.pageY}px`;
+					innerWindow.current.style.height = `calc(${top} + ${height} - ${event.pageY}px)`;
+				}
+
+				if(resizeMode.includes('below')) {
+					innerWindow.current.style.height = `calc(${event.pageY}px - ${top})`;
+				}
+
+			}
+		}
+
+	};
 
   // タイトルバーがクリックされた時のイベント
-  const onMouseDown: MouseEventHandler<HTMLDivElement> = (event) => {
-    if (!props.window.isMinimized) {
-      if (innerWindow.current && data) {
-        const rect = innerWindow.current.getBoundingClientRect();
-        if (setWindowContext)
-          setWindowContext({ [props.window.id]: props.window, ...data });
-
-        if (!props.window.isMaximized) {
-          setDrugOffset({
-            x: rect.left - event.pageX,
-            y: rect.top - event.pageY,
-          });
-        }
-        setDrugging(true);
-
-        props.window.isMaximized = false;
-      }
-    }
+  const onWindowMove: MouseEventHandler<HTMLDivElement> = (event) => {
+		event.stopPropagation();
+		if(!props.window.isMinimized) {
+			if (innerWindow.current && data) {
+				setWindowMode('moving');
+				setDrugging(true);
+				if (setWindowContext) {
+					setWindowContext({ [props.window.id]: props.window, ...data });
+				}
+				if(!props.window.isMaximized) {
+					const rect = innerWindow.current.getBoundingClientRect();
+					setDrugOffset({ x: rect.left - event.pageX, y: rect.top - event.pageY });
+				}
+				props.window.isMaximized = false;
+			}
+		}
   };
 
-  // タイトルバーのドラッグが解除された時のイベント
+	// ウィンドウの周りがクリックされた時のイベント
+	const onWindowResize = (mode:ResizeMode):MouseEventHandler<HTMLDivElement> => {
+		return (event) => {
+			event.stopPropagation();
+			if(!props.window.isMinimized && !props.window.isMaximized) {
+				if (innerWindow.current && data) {
+					setWindowMode('resizing');
+					setResizeMode(mode);
+					setDrugging(true);
+				}
+			}
+		};
+	};
+
+  // ドラッグが解除された時のイベント
   const onMouseUp = () => {
-    if (!props.window.isMinimized && !props.window.isMaximized) {
-      if (innerWindow.current && drugging) {
-        setDrugging(false);
-        props.window.pos = {
-          x: Number(innerWindow.current.style.left.slice(0, -2)),
-          y: Number(innerWindow.current.style.top.slice(0, -2)),
-        };
-        if (setWindowContext) {
-          setWindowContext({ [props.window.id]: props.window, ...data });
-        }
-      }
-    }
+		if(!props.window.isMinimized && !props.window.isMaximized) {
+			if (innerWindow.current && drugging) {
+				setDrugging(false);
+				setWindowMode('staying');
+				props.window.pos = {
+					x: Number(innerWindow.current.style.left.slice(0, -2)),
+					y: Number(innerWindow.current.style.top.slice(0, -2)),
+				};
+				props.window.size = {
+					width: Number(innerWindow.current.style.width.slice(0, -2)),
+					height: Number(innerWindow.current.style.height.slice(0, -2)),
+				};
+				if (setWindowContext) {
+					setWindowContext({ [props.window.id]: props.window, ...data });
+				}
+			}
+		}
   };
 
   // 最小化する時のイベント
@@ -149,28 +201,35 @@ const RetroWindow = (props: RetroWindowProps) => {
         innerWindow.current.style.top = `${props.window.pos.y}px`;
       }
     }
-  }, [props.window.isMinimized, props.window.isMaximized]);
+  }, [props.window.isMinimized, props.window.isMaximized, data]);
 
   // ウィンドウを描画
   return (
-    <div className={`window ${Styles.inner_window}`} ref={innerWindow}>
-      <div className="title-bar" onMouseDown={onMouseDown}>
-        <div className="title-bar-text" style={{ userSelect: "none" }}>
-          {props.window.title}
-        </div>
-        <div className="title-bar-controls">
-          <button aria-label="Minimize" onMouseUp={onMinimize} />
-          <button
-            aria-label={props.window.isMaximized ? "Restore" : "Maximize"}
-            onMouseDown={(event) => event.stopPropagation()}
-            onMouseUp={onMaximize}
-          />
-          <button aria-label="Close" onMouseUp={onVanish} />
+    <div className={`window ${Styles['inner-window']}`} ref={innerWindow}>
+      <div className="title-bar" onMouseDown={onWindowMove}>
+        <div className="title-bar-text" style={{userSelect:'none'}}>{props.window.title}</div>
+        <div className="title-bar-controls" onMouseDown={event=>event.stopPropagation()}>
+          <button aria-label="Minimize" onMouseUp={onMinimize}/>
+          {!props.window.isMaximized && <button aria-label="Maximize" onMouseUp={onMaximize}/>}
+          {props.window.isMaximized && <button aria-label="Restore" onMouseUp={onMaximize}/>}
+          <button aria-label="Close" onMouseUp={onVanish}/>
         </div>
       </div>
       {props.window.isMinimized || (
         <div className="window-body">{props.window.child}</div>
       )}
+			{(!props.window.isMaximized && !props.window.isMinimized) && (
+				<>
+					<span className={`${Styles['resize-area']} ${Styles['area-above']}`} onMouseDown={onWindowResize('above')}/>
+					<span className={`${Styles['resize-area']} ${Styles['area-below']}`} onMouseDown={onWindowResize('below')}/>
+					<span className={`${Styles['resize-area']} ${Styles['area-left']}`} onMouseDown={onWindowResize('left')}/>
+					<span className={`${Styles['resize-area']} ${Styles['area-right']}`} onMouseDown={onWindowResize('right')}/>
+					<span className={`${Styles['resize-area']} ${Styles['area-left-above']}`} onMouseDown={onWindowResize('leftabove')}/>
+					<span className={`${Styles['resize-area']} ${Styles['area-right-above']}`} onMouseDown={onWindowResize('rightabove')}/>
+					<span className={`${Styles['resize-area']} ${Styles['area-left-below']}`} onMouseDown={onWindowResize('leftbelow')}/>
+					<span className={`${Styles['resize-area']} ${Styles['area-right-below']}`} onMouseDown={onWindowResize('rightbelow')}/>
+				</>
+			)}
     </div>
   );
 };
