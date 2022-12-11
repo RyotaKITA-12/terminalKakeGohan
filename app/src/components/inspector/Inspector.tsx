@@ -68,6 +68,7 @@ const Inspector = () => {
     );
     setWindowContext({ [uuid]: rename, ...data });
   };
+  const onClickApply = () => {};
   if (selectedProfile === "" && profiles.length > 0) {
     setSelectedProfile(profiles[0].id);
   }
@@ -93,6 +94,7 @@ const Inspector = () => {
         <button onClick={onClickRemove}>削除</button>
         <button onClick={onClickRename}>名前変更</button>
         <button onClick={onClickSave}>保存</button>
+        <button onClick={onClickApply}>適用</button>
       </div>
     </div>
   );
