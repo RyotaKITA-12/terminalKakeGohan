@@ -75,7 +75,6 @@ const Inspector = () => {
   if (selectedProfile === -1 && profiles.length > 0) {
     setSelectedProfile(0);
   }
-  console.log(selectedProfile, profiles);
   return (
     <div className={Styles.wrapper}>
       <select
