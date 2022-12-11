@@ -7,7 +7,7 @@ const storeProfiles = (data: TProfile[]) => {
 };
 
 const loadProfiles = (): TProfile[] => {
-  return JSON.parse(store.get("data") as string) as TProfile[];
+  return JSON.parse((store.get("data") as string) || "[]") as TProfile[];
 };
 
 export { storeProfiles, loadProfiles };

@@ -14,7 +14,13 @@ const Inspector = () => {
   const { colors, setColors } = useContext(colorContext);
   const { promptList, setPromptList } = useContext(promptContext);
   const { data, setWindowContext } = useContext(windowContext);
-  const [profiles, setProfiles] = useState<TProfile[]>([]);
+  const [profiles, setProfiles_] = useState<TProfile[]>(
+    window.api.load_profiles()
+  );
+  const setProfiles = (data: TProfile[]) => {
+    setProfiles_(data);
+    window.api.store_profiles(data);
+  };
   if (
     !setColors ||
     !colors ||
