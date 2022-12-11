@@ -1,3 +1,4 @@
+import { TProfile } from "@/@types/profile";
 import { app, BrowserWindow, ipcMain, screen } from "electron";
 import * as path from "path";
 import { baseUrl } from "./context";
@@ -78,6 +79,28 @@ ipcMain.handle("update_prompt", (event, data: string) => {
       if (error) throw error;
     });
     return command;
+  } catch (e) {
+    return e;
+  }
+});
+
+ipcMain.handle("apply_tprofile", (event, data: TProfile) => {
+  const prompt = data.prompt.reduce((pv, value) => {
+    return pv + value.value;
+  }, "");
+  const command =
+    'TKG_START_LINE="$((`sed -n \'/Start: Terminal Kake Gohan/=\' ~/.zshrc`-1))";TKG_END_LINE="$((`sed -n \'/End  : Terminal Kake Gohan/=\' ~/.zshrc`+1))";sed "$TKG_START_LINE,$((TKG_END_LINE))d" ~/.zshrc > ~/.tmp_zshrc_tkg;mv -f ~/.tmp_zshrc_tkg ~/.zshrc;rm -f ~/.tmp_zshrc_tkg;echo \'\n#** -- Start: Terminal Kake Gohan -> **#\n\nPROMPT="' +
+    prompt +
+    "\"\n\n#** <- End  : Terminal Kake Gohan -- **#\n' >> ~/.zshrc";
+  console.log(prompt);
+  try {
+    const options = {
+      name: "Electron",
+    };
+    sudo.exec(command, options, function (error) {
+      if (error) throw error;
+    });
+    return data;
   } catch (e) {
     return e;
   }

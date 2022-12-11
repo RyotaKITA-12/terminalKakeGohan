@@ -48,6 +48,7 @@ const Inspector = () => {
     target.prompt = promptList;
     target.color = colors;
     setProfiles([...profiles]);
+    console.log("target", target);
   };
   const onClickRename = () => {
     const uuid = generateUuid();
@@ -71,7 +72,9 @@ const Inspector = () => {
     );
     setWindowContext({ [uuid]: rename, ...data });
   };
-  const onClickApply = () => {};
+  const onClickApply = () => {
+    window.api.apply_tprofile(profiles[selectedProfile]);
+  };
   if (selectedProfile === -1 && profiles.length > 0) {
     setSelectedProfile(0);
   }
