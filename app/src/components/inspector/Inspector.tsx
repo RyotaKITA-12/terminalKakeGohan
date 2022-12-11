@@ -24,7 +24,6 @@ const Inspector = () => {
     !setWindowContext
   )
     return <></>;
-  console.log(colors.screenText.color);
   const onClickAdd = () => {
     setProfiles([
       ...profiles,
@@ -51,6 +50,7 @@ const Inspector = () => {
     if (!target) return;
     target.prompt = [...promptList];
     target.color = { ...colors };
+    console.log(target);
     setProfiles(JSON.parse(JSON.stringify([...profiles])));
   };
   const onClickRename = () => {
