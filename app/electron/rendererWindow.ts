@@ -86,7 +86,7 @@ ipcMain.handle("update_prompt", (event, data: string) => {
 
 ipcMain.handle("apply_tprofile", (event, data: TProfile) => {
   const prompt = data.prompt.reduce((pv, value) => {
-    return pv + value.value;
+    return pv + value.value + " ";
   }, "");
   const command =
     'TKG_START_LINE="$((`sed -n \'/Start: Terminal Kake Gohan/=\' ~/.zshrc`-1))";TKG_END_LINE="$((`sed -n \'/End  : Terminal Kake Gohan/=\' ~/.zshrc`+1))";sed "$TKG_START_LINE,$((TKG_END_LINE))d" ~/.zshrc > ~/.tmp_zshrc_tkg;mv -f ~/.tmp_zshrc_tkg ~/.zshrc;rm -f ~/.tmp_zshrc_tkg;echo \'\n#** -- Start: Terminal Kake Gohan -> **#\n\nPROMPT="' +
