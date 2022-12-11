@@ -32,11 +32,14 @@ const App = () => {
     const Prompts = createWindow("PROMPTS", <Prompt />, {
       width: 400,
       height: 400,
-      minWidth: 350,
       minimized: true,
     });
     const inspector = createWindow("INSPECTOR", <Inspector />);
-    const caret = createWindow("CARET", <Caret />);
+    const caret = createWindow("CARET", <Caret />, {
+      width: 260,
+      height: 200,
+      minimized: true,
+    });
     const window: ManagedWindow = {};
     window[ColorPicker.id] = ColorPicker;
     window[Prompts.id] = Prompts;
