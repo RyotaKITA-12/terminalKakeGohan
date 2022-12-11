@@ -128,19 +128,46 @@ ipcMain.handle("apply_tprofile", (event, data: TProfile) => {
 </dict>
 </plist>
   `;
-
+  const file = path.join(
+    __dirname,
+    `../../electron/data/${data.name}.terminal`
+  );
   // XMLを書き出し
-  fs.writeFile(`./electron/data/${data.name}.terminal`, xml, (error) => {
+  fs.writeFile(file, xml, (error) => {
     console.log(error);
   });
 
   const prompt = data.prompt.reduce((pv, value) => {
     return pv + value.value + " ";
   }, "");
-  const command_prompt = `TKG_START_LINE="$((\`sed -n '/Start: Terminal Kake Gohan/=' ~/.zshrc\`-1))"; if [ $TKG_START_LINE = "-1" ];then echo '\n#** -- Start: Terminal Kake Gohan -> **#\n\nPROMPT="${prompt}"\n\n#** <- End  : Terminal Kake Gohan -- **#\n' >> ~/.zshrc; else TKG_START_LINE="$((\`sed -n '/Start: Terminal Kake Gohan/=' ~/.zshrc\`-1))";TKG_END_LINE="$((\`sed -n '/End  : Terminal Kake Gohan/=' ~/.zshrc\`+1))";sed "$TKG_START_LINE,$((TKG_END_LINE))d" ~/.zshrc > ~/.tmp_zshrc_tkg;mv -f ~/.tmp_zshrc_tkg ~/.zshrc;rm -f ~/.tmp_zshrc_tkg;echo '\n#** -- Start: Terminal Kake Gohan -> **#\n\nPROMPT="${prompt}"\n\n#** <- End  : Terminal Kake Gohan -- **#\n' >> ~/.zshrc;fi;`;
-  const command_terminal = `term_template=\`cat ./electron/data/${data.name}.terminal\`;plutil -insert "Window Settings.${data.name}" -xml $term_template ~/Library/Preferences/com.apple.Terminal.plist`;
-  console.log("prompt :", command_prompt);
-  console.log("terminal :", command_terminal);
+  const command_prompt = `TKG_START_LINE="$((\`sed -n '/Start: Terminal Kake Gohan/=' ${path.join(
+    process.env.HOME,
+    "/.zshrc"
+  )}\`-1))"; if [ $TKG_START_LINE = "-1" ];then echo '\n#** -- Start: Terminal Kake Gohan -> **#\n\nPROMPT="${prompt}"\n\n#** <- End  : Terminal Kake Gohan -- **#\n' >> ${path.join(
+    process.env.HOME,
+    "/.zshrc"
+  )}; else TKG_START_LINE="$((\`sed -n '/Start: Terminal Kake Gohan/=' ${path.join(
+    process.env.HOME,
+    "/.zshrc"
+  )}\`-1))";TKG_END_LINE="$((\`sed -n '/End  : Terminal Kake Gohan/=' ${path.join(
+    process.env.HOME,
+    "/.zshrc"
+  )}\`+1))";sed "$TKG_START_LINE,$((TKG_END_LINE))d" ${path.join(
+    process.env.HOME,
+    "/.zshrc"
+  )} > ~/.tmp_zshrc_tkg;mv -f ~/.tmp_zshrc_tkg ${path.join(
+    process.env.HOME,
+    "/.zshrc"
+  )};rm -f ~/.tmp_zshrc_tkg;echo '\n#** -- Start: Terminal Kake Gohan -> **#\n\nPROMPT="${prompt}"\n\n#** <- End  : Terminal Kake Gohan -- **#\n' >> ${path.join(
+    process.env.HOME,
+    "/.zshrc"
+  )};fi;`;
+  const command_terminal = `plutil -insert "Window Settings.${
+    data.name
+  }" -xml '${xml}' ${path.join(
+    process.env.HOME,
+    "/Library/Preferences/com.apple.Terminal.plist"
+  )}`;
 
   // const command = `
   //   TKG_START_LINE="$((\`sed -n '/Start: Terminal Kake Gohan/=' ~/.zshrc\`-1))"
@@ -152,8 +179,33 @@ ipcMain.handle("apply_tprofile", (event, data: TProfile) => {
   //   echo '\n#** -- Start: Terminal Kake Gohan -> **#\n\nPROMPT="${prompt}"\n\n#** <- End  : Terminal Kake Gohan -- **#\n' >> ~/.zshrc
   //   chmod 777 ~/.zshrc
   // `;
-  console.log(prompt);
-  try {
+  const init = async () => {
+    try {
+      exec(command_prompt, function (error, stdout, stderr) {
+        if (error) {
+          console.log(stdout);
+          console.log(stderr);
+          throw error;
+        }
+      });
+      exec(
+        command_terminal,
+        { env: { ...process.env, term_template: xml.replace(/\n/g, "") } },
+        function (error, stdout, stderr) {
+          if (error) {
+            console.log(stdout);
+            console.log(stderr);
+            throw error;
+          }
+        }
+      );
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  init();
+  /*  try {
+
     exec(command_prompt + command_terminal, function (error, stdout, stderr) {
       console.log(stdout);
       console.log(stderr);
@@ -162,7 +214,7 @@ ipcMain.handle("apply_tprofile", (event, data: TProfile) => {
     return data;
   } catch (e) {
     return e;
-  }
+  }*/
 });
 
 export { createRendererWindow };
