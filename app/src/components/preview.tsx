@@ -60,7 +60,7 @@ const TerminalPreview = () => {
         // スタックに投げた要素を持ってくる
         const element = elementStack.pop();
 
-        if (begin && element) {
+        if (begin && element !== undefined) {
           // 太字
           if (begin.value === "%B" && end.value === "%b") {
             const style = {
