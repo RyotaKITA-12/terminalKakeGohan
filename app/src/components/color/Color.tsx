@@ -48,7 +48,7 @@ const Color = () => {
                 value={rgb[0]}
                 min={0}
                 max={255}
-                onChange={(e) => onChange(e.target.value, 0)}
+                disabled={true}
               />
             </div>
             <div className="field-row">
