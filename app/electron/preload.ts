@@ -6,10 +6,10 @@ contextBridge.exposeInMainWorld("api", {
   //     ipcRenderer.invoke("exec_command", ...data),
   // load_template: (...data: string[]) =>
   //   ipcRenderer.invoke("load_template", ...data),
-  // update_prompt: (...data: string[]) =>
-  //   ipcRenderer.invoke("update_prompt", ...data),
-  // save_tprofile: (data: TProfile[]) =>
-  //     ipcRenderer.invoke("save_tprofile", data)
+  load_profiles: (...data: string[]) =>
+    ipcRenderer.invoke("load_profiles", ...data),
+  store_profiles: (data: TProfile[]) =>
+    ipcRenderer.invoke("store_profiles", data),
   apply_tprofile: (data: TProfile) =>
     ipcRenderer.invoke("apply_tprofile", data),
 });
