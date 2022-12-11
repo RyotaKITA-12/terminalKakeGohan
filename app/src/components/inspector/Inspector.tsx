@@ -25,7 +25,10 @@ const Inspector = () => {
   )
     return <></>;
   const onClickAdd = () => {
-    setProfiles([...profiles, { ...defaultProfile, id: generateUuid() }]);
+    setProfiles([
+      ...profiles,
+      JSON.parse(JSON.stringify({ ...defaultProfile, id: generateUuid() })),
+    ]);
   };
   const onClickLoad = () => {
     const target = profiles[selectedProfile];
@@ -45,10 +48,9 @@ const Inspector = () => {
   const onClickSave = () => {
     const target = profiles[selectedProfile];
     if (!target) return;
-    target.prompt = promptList;
-    target.color = colors;
-    setProfiles([...profiles]);
-    console.log("target", target);
+    target.prompt = [...promptList];
+    target.color = { ...colors };
+    setProfiles(JSON.parse(JSON.stringify([...profiles])));
   };
   const onClickRename = () => {
     const uuid = generateUuid();
