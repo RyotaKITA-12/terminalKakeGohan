@@ -3,6 +3,7 @@ import { app, BrowserWindow, ipcMain, screen } from "electron";
 import * as path from "path";
 import { baseUrl } from "./context";
 import * as sudo from "sudo-prompt";
+import { exec } from "child_process";
 
 let rendererWindow: BrowserWindow;
 
@@ -67,15 +68,17 @@ ipcMain.handle("load_template", (event, data: string) => {
 });
 
 ipcMain.handle("update_prompt", (event, data: string) => {
-  const command =
-    'TKG_START_LINE="$((`sed -n \'/Start: Terminal Kake Gohan/=\' ~/.zshrc`-1))";TKG_END_LINE="$((`sed -n \'/End  : Terminal Kake Gohan/=\' ~/.zshrc`+1))";sed "$TKG_START_LINE,$((TKG_END_LINE))d" ~/.zshrc > ~/.tmp_zshrc_tkg;mv -f ~/.tmp_zshrc_tkg ~/.zshrc;rm -f ~/.tmp_zshrc_tkg;echo \'\n#** -- Start: Terminal Kake Gohan -> **#\n\nPROMPT="' +
-    data +
-    "\"\n\n#** <- End  : Terminal Kake Gohan -- **#\n' >> ~/.zshrc";
+  const command = `
+    TKG_START_LINE="$((\`sed -n '/Start: Terminal Kake Gohan/=' ~/.zshrc\`-1))"
+    TKG_END_LINE="$((\`sed -n '/End  : Terminal Kake Gohan/=' ~/.zshrc\`+1))"
+    sed "$TKG_START_LINE,$((TKG_END_LINE))d" ~/.zshrc > ~/.tmp_zshrc_tkg
+    mv -f ~/.tmp_zshrc_tkg ~/.zshrc
+    rm -f ~/.tmp_zshrc_tkg
+    echo '\n#** -- Start: Terminal Kake Gohan -> **#\n\nPROMPT="${data}"\n\n#** <- End  : Terminal Kake Gohan -- **#\n' >> ~/.zshrc
+    chmod 777 ~/.zshrc
+  `;
   try {
-    const options = {
-      name: "Electron",
-    };
-    sudo.exec(command, options, function (error) {
+    exec(command, function (error) {
       if (error) throw error;
     });
     return command;
@@ -88,16 +91,20 @@ ipcMain.handle("apply_tprofile", (event, data: TProfile) => {
   const prompt = data.prompt.reduce((pv, value) => {
     return pv + value.value + " ";
   }, "");
-  const command =
-    'TKG_START_LINE="$((`sed -n \'/Start: Terminal Kake Gohan/=\' ~/.zshrc`-1))";TKG_END_LINE="$((`sed -n \'/End  : Terminal Kake Gohan/=\' ~/.zshrc`+1))";sed "$TKG_START_LINE,$((TKG_END_LINE))d" ~/.zshrc > ~/.tmp_zshrc_tkg;mv -f ~/.tmp_zshrc_tkg ~/.zshrc;rm -f ~/.tmp_zshrc_tkg;echo \'\n#** -- Start: Terminal Kake Gohan -> **#\n\nPROMPT="' +
-    prompt +
-    "\"\n\n#** <- End  : Terminal Kake Gohan -- **#\n' >> ~/.zshrc";
+  const command = `
+    TKG_START_LINE="$((\`sed -n '/Start: Terminal Kake Gohan/=' ~/.zshrc\`-1))"
+    TKG_END_LINE="$((\`sed -n '/End  : Terminal Kake Gohan/=' ~/.zshrc\`+1))"
+    if [ $]
+    sed "$TKG_START_LINE,$((TKG_END_LINE))d" ~/.zshrc > ~/.tmp_zshrc_tkg
+    mv -f ~/.tmp_zshrc_tkg ~/.zshrc
+    rm -f ~/.tmp_zshrc_tkg
+    echo '\n#** -- Start: Terminal Kake Gohan -> **#\n\nPROMPT="${prompt}"\n\n#** <- End  : Terminal Kake Gohan -- **#\n' >> ~/.zshrc
+    chmod 777 ~/.zshrc
+  `;
   console.log(prompt);
   try {
-    const options = {
-      name: "Electron",
-    };
-    sudo.exec(command, options, function (error) {
+    exec(command, function (error, stdout) {
+      console.log(stdout);
       if (error) throw error;
     });
     return data;
