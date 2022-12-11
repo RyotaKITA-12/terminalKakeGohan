@@ -32,7 +32,7 @@ const prompts: TPromptList = [
   { name: "日付(曜-dd形式)", value: "%w", preview: "火  6" },
   { name: "時刻(24h形式)", value: "%T", preview: "17:20" },
   { name: "時刻(24h形式 + 秒)", value: "%*", preview: "17:20:35" },
-  { name: "時刻(12h形式)", value: "%T", preview: "5:20PM" },
+  { name: "時刻(12h形式)", value: "%t", preview: "5:20PM" },
   { name: "太字(始)", value: "%B", preview: "" },
   { name: "太字(終)", value: "%b", preview: "" },
   { name: "下線(始)", value: "%U", preview: "" },
