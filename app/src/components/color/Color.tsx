@@ -11,11 +11,6 @@ const Color = () => {
   const { colors, setColors } = useContext(colorContext);
   if (!colors || !setColors) return <></>;
   const rgb = hex2rgb(colors[target].color);
-  const onChange = (value: string, index: number) => {
-    rgb[index] = Number(value);
-    colors[target].color = rgb2hex(rgb);
-    setColors({ ...colors });
-  };
   return (
     <div className={Styles.wrapper}>
       <div className={Styles.row}>
@@ -60,7 +55,7 @@ const Color = () => {
                 value={rgb[1]}
                 min={0}
                 max={255}
-                onChange={(e) => onChange(e.target.value, 1)}
+                disabled={true}
               />
             </div>
             <div className="field-row">
@@ -72,7 +67,7 @@ const Color = () => {
                 value={rgb[2]}
                 min={0}
                 max={255}
-                onChange={(e) => onChange(e.target.value, 2)}
+                disabled={true}
               />
             </div>
           </fieldset>
