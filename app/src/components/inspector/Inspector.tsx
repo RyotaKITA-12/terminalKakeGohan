@@ -8,11 +8,13 @@ import { promptContext } from "@/context/prompt";
 import { windowContext } from "@/context/window";
 import { createWindow } from "@/libs/createWindow";
 import { Rename } from "@/components/rename/Rename";
+import { caretContext } from "@/context/caret";
 
 const Inspector = () => {
   const [selectedProfile, setSelectedProfile] = useState<number>(-1);
   const { colors, setColors } = useContext(colorContext);
   const { promptList, setPromptList } = useContext(promptContext);
+  const { caret, setCaret } = useContext(caretContext);
   const { data, setWindowContext } = useContext(windowContext);
   const [profiles, setProfiles_] = useState<TProfile[]>([]);
   const setProfiles = (data: TProfile[]) => {
@@ -30,6 +32,8 @@ const Inspector = () => {
     !colors ||
     !setPromptList ||
     !promptList ||
+    !caret ||
+    !setCaret ||
     !data ||
     !setWindowContext
   )
@@ -45,6 +49,7 @@ const Inspector = () => {
     if (!target) return;
     setColors(target.color);
     setPromptList(target.prompt);
+    setCaret(target.caret);
   };
   const onClickRemove = () => {
     const newProfiles = [
@@ -60,6 +65,7 @@ const Inspector = () => {
     if (!target) return;
     target.prompt = [...promptList];
     target.color = { ...colors };
+    target.caret = caret;
     setProfiles(JSON.parse(JSON.stringify([...profiles])));
   };
   const onClickRename = () => {

@@ -1,6 +1,8 @@
 import { defaultColors } from "@/definition/colors";
+import { TProfile } from "@/@types/profile";
 
-const defaultProfile = {
+const defaultProfile: TProfile = {
+  id: "",
   name: "default",
   prompt: [
     { name: "ユーザ名", value: "%n", preview: "ryota-k" },
@@ -9,5 +11,6 @@ const defaultProfile = {
     { name: "root : #,  それ以外 : %", value: "%#", preview: "%" },
   ],
   color: defaultColors,
+  caret: "block",
 };
 export { defaultProfile };

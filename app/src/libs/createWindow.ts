@@ -24,7 +24,10 @@ const createWindow = (
     isMaximized: false,
     pos: { x: data?.posX || 0, y: data?.posY || 0 },
     size: { width: data?.width || 300, height: data?.height || 300 },
-    minSize: { width: data?.minWidth || 300, height: data?.minHeight || 300 },
+    minSize: {
+      width: data?.minWidth || data?.width || 300,
+      height: data?.minHeight || data?.height || 300,
+    },
     title,
     child,
   };

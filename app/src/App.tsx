@@ -8,16 +8,19 @@ import { createWindow } from "@/libs/createWindow";
 import { Prompt } from "@/components/prompt/Prompt";
 import { PromptContext } from "@/context/prompt";
 import { TPromptList } from "@/@types/prompt";
-import { Color } from "@/components/color/Color";
+import { Caret } from "@/components/caret/Caret";
 import { ColorContext } from "@/context/color";
 import { defaultColors } from "@/definition/colors";
 import { Logo } from "@/components/logo/Logo";
 import { Inspector } from "@/components/inspector/Inspector";
+import { CaretContext } from "@/context/caret";
+import { Color } from "@/components/color/Color";
 
 const App = () => {
   const [data, setWindow] = useState<ManagedWindow>({});
   const [promptList, setPromptList] = useState<TPromptList>([]);
   const [colors, setColors] = useState<TColors>(defaultColors);
+  const [caret, setCaret] = useState<TCaret>("block");
   useEffect(() => {
     const ColorPicker = createWindow("COLORS", <Color />, {
       width: 260,
@@ -29,14 +32,19 @@ const App = () => {
     const Prompts = createWindow("PROMPTS", <Prompt />, {
       width: 400,
       height: 400,
-      minWidth: 350,
       minimized: true,
     });
     const inspector = createWindow("INSPECTOR", <Inspector />);
+    const caret = createWindow("CARET", <Caret />, {
+      width: 260,
+      height: 200,
+      minimized: true,
+    });
     const window: ManagedWindow = {};
     window[ColorPicker.id] = ColorPicker;
     window[Prompts.id] = Prompts;
     window[inspector.id] = inspector;
+    window[caret.id] = caret;
     setWindow(window);
   }, [0]);
   const windows = [],
@@ -53,10 +61,12 @@ const App = () => {
     <WindowContext value={{ data: data, setWindowContext: setWindow }}>
       <PromptContext value={{ promptList, setPromptList }}>
         <ColorContext value={{ colors, setColors }}>
-          <Logo />
-          <TerminalPreview />
-          <div className={Styles.app}>{windows}</div>
-          <div className={Styles.taskbar}>{minimizedWindows}</div>
+          <CaretContext value={{ caret, setCaret }}>
+            <Logo />
+            <TerminalPreview />
+            <div className={Styles.app}>{windows}</div>
+            <div className={Styles.taskbar}>{minimizedWindows}</div>
+          </CaretContext>
         </ColorContext>
       </PromptContext>
     </WindowContext>
