@@ -4,7 +4,13 @@
         "module": "commonjs",
         "sourceMap": true,
         "outDir": "../build",
-        "rootDir": "../"
+        "rootDir": "../",
+        "baseUrl": "../",
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ]
+        }
     },
     "include": [
         "*",

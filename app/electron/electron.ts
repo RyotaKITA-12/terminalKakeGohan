@@ -1,4 +1,4 @@
-import { app, BrowserWindow, globalShortcut } from "electron";
+import { app, BrowserWindow } from "electron";
 import { createRendererWindow } from "./rendererWindow";
 
 // ウィンドウが閉じられたらアプリを終了
