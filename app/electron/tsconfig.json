@@ -1,13 +1,13 @@
 {
-  "compilerOptions": {
-	"target": "ESNext",
-	"module": "commonjs",
-	"sourceMap": true,
-	"outDir": "../build",
-	"rootDir": "../"
-  },
-  "include": [
-	"*",
-	"../src/@types/*.d.ts"
-  ]
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "commonjs",
+        "sourceMap": true,
+        "outDir": "../build",
+        "rootDir": "../"
+    },
+    "include": [
+        "*",
+        "../src/@types/*.d.ts"
+    ]
 }
