@@ -1,0 +1,35 @@
+.wrapper {
+  .row {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    .item {
+      flex: 1;
+      .form {
+        position: relative;
+        .fieldText {
+          background-color: #c0c0c0;
+          position: absolute;
+          top: -9px;
+          padding: 0 2px;
+        }
+        & > div {
+          display: flex;
+          justify-content: space-evenly;
+          .input {
+            width: 40px;
+          }
+        }
+      }
+    }
+    .colorButton {
+      width: 20px;
+      height: 20px;
+      margin: 1px;
+      box-shadow: inset -1px -1px #ffffff, inset 1px 1px #0a0a0a,
+        inset -2px -2px #dfdfdf, inset 2px 2px #808080;
+    }
+  }
+}

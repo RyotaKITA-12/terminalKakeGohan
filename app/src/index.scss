@@ -1,0 +1,38 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+html {
+  background-color: #007f80;
+}
+select[size] {
+  height: auto;
+  padding: 3px 4px;
+  background-image: unset;
+  overflow-y: scroll;
+  &:focus {
+    background-color: white;
+    option {
+      background-color: unset;
+    }
+  }
+}
+button:not(:disabled):active,
+input[type="reset"]:not(:disabled):active,
+input[type="submit"]:not(:disabled):active {
+  padding: unset !important;
+}
+
+input[type="number"] {
+  -webkit-appearance: inner-spin-button !important;
+  margin: 0;
+}
+.window {
+  display: flex;
+  flex-direction: column;
+  .window-body {
+    height: calc(100% - 36px);
+  }
+}
