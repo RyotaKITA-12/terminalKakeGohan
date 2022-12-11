@@ -50,6 +50,7 @@ const Inspector = () => {
     if (!target) return;
     target.prompt = [...promptList];
     target.color = { ...colors };
+    console.log(target);
     setProfiles(JSON.parse(JSON.stringify([...profiles])));
   };
   const onClickRename = () => {
