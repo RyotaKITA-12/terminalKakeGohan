@@ -13,8 +13,6 @@ const Selector = ({ id }: { id: string }) => {
   const onClickAdd = () => {
     if (!selectedPrompt) return;
     setPromptList([...promptList, selectedPrompt]);
-    delete data[id];
-    setWindowContext({ ...data });
   };
   return (
     <div className={Styles.wrapper}>
