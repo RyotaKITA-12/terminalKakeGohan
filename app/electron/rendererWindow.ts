@@ -108,6 +108,9 @@ ipcMain.handle("apply_tprofile", (event, data: TProfile) => {
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
+<dict>
+  <key>type</key>
+  <string>Window Settings</string>
   <key>name</key>
   <string>${data.name}</string>
   <key>TextColor</key>
@@ -119,9 +122,10 @@ ipcMain.handle("apply_tprofile", (event, data: TProfile) => {
 	<key>SelectionColor</key>
   <data>${color[data.color.selectedText.color]}</data>
 	<key>CursorType</key>
-  <string>${caretType}</string>
+  <integer>${caretType}</integer>
 	<key>CursorBlink</key>
-  <string>${caretBlink}</string>
+  ${caretBlink ? "<true/>" : "<false/>"}
+</dict>
 </plist>
   `;
 
@@ -133,20 +137,26 @@ ipcMain.handle("apply_tprofile", (event, data: TProfile) => {
   const prompt = data.prompt.reduce((pv, value) => {
     return pv + value.value + " ";
   }, "");
-  const command = `
-    TKG_START_LINE="$((\`sed -n '/Start: Terminal Kake Gohan/=' ~/.zshrc\`-1))"
-    TKG_END_LINE="$((\`sed -n '/End  : Terminal Kake Gohan/=' ~/.zshrc\`+1))"
-    if [ $]
-    sed "$TKG_START_LINE,$((TKG_END_LINE))d" ~/.zshrc > ~/.tmp_zshrc_tkg
-    mv -f ~/.tmp_zshrc_tkg ~/.zshrc
-    rm -f ~/.tmp_zshrc_tkg
-    echo '\n#** -- Start: Terminal Kake Gohan -> **#\n\nPROMPT="${prompt}"\n\n#** <- End  : Terminal Kake Gohan -- **#\n' >> ~/.zshrc
-    chmod 777 ~/.zshrc
-  `;
+  const command_prompt = `TKG_START_LINE="$((\`sed -n '/Start: Terminal Kake Gohan/=' ~/.zshrc\`-1))"; if [ $TKG_START_LINE = "-1" ];then echo '\n#** -- Start: Terminal Kake Gohan -> **#\n\nPROMPT="${prompt}"\n\n#** <- End  : Terminal Kake Gohan -- **#\n' >> ~/.zshrc; else TKG_START_LINE="$((\`sed -n '/Start: Terminal Kake Gohan/=' ~/.zshrc\`-1))";TKG_END_LINE="$((\`sed -n '/End  : Terminal Kake Gohan/=' ~/.zshrc\`+1))";sed "$TKG_START_LINE,$((TKG_END_LINE))d" ~/.zshrc > ~/.tmp_zshrc_tkg;mv -f ~/.tmp_zshrc_tkg ~/.zshrc;rm -f ~/.tmp_zshrc_tkg;echo '\n#** -- Start: Terminal Kake Gohan -> **#\n\nPROMPT="${prompt}"\n\n#** <- End  : Terminal Kake Gohan -- **#\n' >> ~/.zshrc;fi;`;
+  const command_terminal = `term_template=\`cat ./electron/data/${data.name}.terminal\`;plutil -insert "Window Settings.${data.name}" -xml $term_template ~/Library/Preferences/com.apple.Terminal.plist`;
+  console.log("prompt :", command_prompt);
+  console.log("terminal :", command_terminal);
+
+  // const command = `
+  //   TKG_START_LINE="$((\`sed -n '/Start: Terminal Kake Gohan/=' ~/.zshrc\`-1))"
+  //   TKG_END_LINE="$((\`sed -n '/End  : Terminal Kake Gohan/=' ~/.zshrc\`+1))"
+  //   if [ $]
+  //   sed "$TKG_START_LINE,$((TKG_END_LINE))d" ~/.zshrc > ~/.tmp_zshrc_tkg
+  //   mv -f ~/.tmp_zshrc_tkg ~/.zshrc
+  //   rm -f ~/.tmp_zshrc_tkg
+  //   echo '\n#** -- Start: Terminal Kake Gohan -> **#\n\nPROMPT="${prompt}"\n\n#** <- End  : Terminal Kake Gohan -- **#\n' >> ~/.zshrc
+  //   chmod 777 ~/.zshrc
+  // `;
   console.log(prompt);
   try {
-    exec(command, function (error, stdout) {
+    exec(command_prompt + command_terminal, function (error, stdout, stderr) {
       console.log(stdout);
+      console.log(stderr);
       if (error) throw error;
     });
     return data;
