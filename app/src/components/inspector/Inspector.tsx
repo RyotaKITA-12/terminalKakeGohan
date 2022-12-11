@@ -10,7 +10,7 @@ import { createWindow } from "@/libs/createWindow";
 import { Rename } from "@/components/rename/Rename";
 
 const Inspector = () => {
-  const [selectedProfile, setSelectedProfile] = useState<string>("");
+  const [selectedProfile, setSelectedProfile] = useState<number>(-1);
   const { colors, setColors } = useContext(colorContext);
   const { promptList, setPromptList } = useContext(promptContext);
   const { data, setWindowContext } = useContext(windowContext);
@@ -28,35 +28,38 @@ const Inspector = () => {
     setProfiles([...profiles, { ...defaultProfile, id: generateUuid() }]);
   };
   const onClickLoad = () => {
-    const target = profiles.filter((val) => val.id === selectedProfile);
-    if (target.length < 1) return;
-    setColors(target[0].color);
-    setPromptList(target[0].prompt);
+    const target = profiles[selectedProfile];
+    if (!target) return;
+    setColors(target.color);
+    setPromptList(target.prompt);
   };
   const onClickRemove = () => {
-    setProfiles(profiles.filter((val) => val.id !== selectedProfile));
+    const newProfiles = [
+      ...profiles.slice(0, selectedProfile),
+      ...profiles.slice(selectedProfile + 1),
+    ];
+    setProfiles(newProfiles);
+    if (newProfiles.length >= selectedProfile)
+      setSelectedProfile(newProfiles.length - 1);
   };
   const onClickSave = () => {
-    const target = profiles.filter((val) => val.id === selectedProfile);
-    if (target.length < 1) return;
-    target[0].prompt = promptList;
-    target[0].color = colors;
+    const target = profiles[selectedProfile];
+    if (!target) return;
+    target.prompt = promptList;
+    target.color = colors;
     setProfiles([...profiles]);
   };
   const onClickRename = () => {
     const uuid = generateUuid();
-    const target =
-      selectedProfile === ""
-        ? profiles
-        : profiles.filter((val) => val.id === selectedProfile);
-    if (target.length < 1) return;
+    const target = profiles[selectedProfile];
+    if (!target) return;
     const rename = createWindow(
       "名前変更",
       <Rename
         id={uuid}
-        value={target[0].name}
+        value={target.name}
         onChange={(val) => {
-          target[0].name = val;
+          target.name = val;
         }}
       />,
       {
@@ -69,20 +72,21 @@ const Inspector = () => {
     setWindowContext({ [uuid]: rename, ...data });
   };
   const onClickApply = () => {};
-  if (selectedProfile === "" && profiles.length > 0) {
-    setSelectedProfile(profiles[0].id);
+  if (selectedProfile === -1 && profiles.length > 0) {
+    setSelectedProfile(0);
   }
+  console.log(selectedProfile, profiles);
   return (
     <div className={Styles.wrapper}>
       <select
         size={20}
         className={Styles.select}
         value={selectedProfile}
-        onChange={(e) => setSelectedProfile(e.target.value)}
+        onChange={(e) => setSelectedProfile(Number(e.target.value))}
       >
         {profiles.map((profile, index) => {
           return (
-            <option key={index} value={profile.id}>
+            <option key={profile.id} value={index}>
               {profile.name}
             </option>
           );
