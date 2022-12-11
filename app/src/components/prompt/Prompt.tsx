@@ -15,7 +15,7 @@ const Prompt = () => {
   if (!promptList || !setPromptList || !data || !setWindowContext) return <></>;
   const onClickAdd = () => {
     const uuid = generateUuid();
-    const selector = createWindow("PROMPT", <Selector id={uuid} />, {
+    const selector = createWindow("PROMPT", <Selector />, {
       closable: true,
       uuid,
     });

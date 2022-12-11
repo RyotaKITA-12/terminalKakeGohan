@@ -5,7 +5,7 @@ import { TPrompt } from "@/@types/prompt";
 import { windowContext } from "@/context/window";
 import { promptContext } from "@/context/prompt";
 
-const Selector = ({ id }: { id: string }) => {
+const Selector = () => {
   const [selectedPrompt, setSelectedPrompt] = useState<TPrompt | undefined>();
   const { data, setWindowContext } = useContext(windowContext);
   const { promptList, setPromptList } = useContext(promptContext);

@@ -22,7 +22,7 @@ const defaultColors: TColors = {
     name: "画面の文字",
   },
   screenBg: {
-    color: "#0C0C02",
+    color: "#0C0C0C",
     name: "画面の背景",
   },
   boldText: {

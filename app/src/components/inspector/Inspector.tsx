@@ -1,5 +1,5 @@
 import Styles from "./Inspector.module.scss";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { TProfile } from "@/@types/profile";
 import { defaultProfile } from "@/definition/profile";
 import { generateUuid } from "@/libs/uuid";
@@ -8,18 +8,32 @@ import { promptContext } from "@/context/prompt";
 import { windowContext } from "@/context/window";
 import { createWindow } from "@/libs/createWindow";
 import { Rename } from "@/components/rename/Rename";
+import { caretContext } from "@/context/caret";
 
 const Inspector = () => {
   const [selectedProfile, setSelectedProfile] = useState<number>(-1);
   const { colors, setColors } = useContext(colorContext);
   const { promptList, setPromptList } = useContext(promptContext);
+  const { caret, setCaret } = useContext(caretContext);
   const { data, setWindowContext } = useContext(windowContext);
-  const [profiles, setProfiles] = useState<TProfile[]>([]);
+  const [profiles, setProfiles_] = useState<TProfile[]>([]);
+  const setProfiles = (data: TProfile[]) => {
+    setProfiles_(data);
+    void window.api.store_profiles(data);
+  };
+  useEffect(() => {
+    const load = async () => {
+      setProfiles_(await window.api.load_profiles());
+    };
+    void load();
+  }, [0]);
   if (
     !setColors ||
     !colors ||
     !setPromptList ||
     !promptList ||
+    !caret ||
+    !setCaret ||
     !data ||
     !setWindowContext
   )
@@ -28,13 +42,14 @@ const Inspector = () => {
     setProfiles([
       ...profiles,
       JSON.parse(JSON.stringify({ ...defaultProfile, id: generateUuid() })),
-    ]);
+    ] as TProfile[]);
   };
   const onClickLoad = () => {
     const target = profiles[selectedProfile];
     if (!target) return;
     setColors(target.color);
     setPromptList(target.prompt);
+    setCaret(target.caret);
   };
   const onClickRemove = () => {
     const newProfiles = [
@@ -50,8 +65,8 @@ const Inspector = () => {
     if (!target) return;
     target.prompt = [...promptList];
     target.color = { ...colors };
-    console.log(target);
-    setProfiles(JSON.parse(JSON.stringify([...profiles])));
+    target.caret = caret;
+    setProfiles(JSON.parse(JSON.stringify([...profiles])) as TProfile[]);
   };
   const onClickRename = () => {
     const uuid = generateUuid();
@@ -75,7 +90,10 @@ const Inspector = () => {
     );
     setWindowContext({ [uuid]: rename, ...data });
   };
-  const onClickApply = () => {};
+  const onClickApply = () => {
+    if (profiles[selectedProfile])
+      void window.api.apply_tprofile(profiles[selectedProfile]);
+  };
   if (selectedProfile === -1 && profiles.length > 0) {
     setSelectedProfile(0);
   }

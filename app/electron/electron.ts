@@ -1,5 +1,6 @@
-import { app, BrowserWindow, globalShortcut } from "electron";
+import { app, BrowserWindow } from "electron";
 import { createRendererWindow } from "./rendererWindow";
+import { registerHandler } from "./storeHandler";
 
 // ウィンドウが閉じられたらアプリを終了
 app.on("window-all-closed", () => {
@@ -11,6 +12,7 @@ app
   .then(() => {
     // await onStartUp();
     createRendererWindow();
+    registerHandler();
     app.on("activate", () => {
       if (BrowserWindow.getAllWindows().length === 0) createRendererWindow();
     });

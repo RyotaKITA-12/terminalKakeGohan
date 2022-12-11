@@ -5,4 +5,5 @@ type TProfile = {
   name: string;
   prompt: TPromptList;
   color: TColors;
+  caret: TCaret;
 };
