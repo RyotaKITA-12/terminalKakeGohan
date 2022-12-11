@@ -1,5 +1,5 @@
 import Styles from "./Inspector.module.scss";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { TProfile } from "@/@types/profile";
 import { defaultProfile } from "@/definition/profile";
 import { generateUuid } from "@/libs/uuid";
@@ -14,13 +14,17 @@ const Inspector = () => {
   const { colors, setColors } = useContext(colorContext);
   const { promptList, setPromptList } = useContext(promptContext);
   const { data, setWindowContext } = useContext(windowContext);
-  const [profiles, setProfiles_] = useState<TProfile[]>(
-    window.api.load_profiles()
-  );
+  const [profiles, setProfiles_] = useState<TProfile[]>([]);
   const setProfiles = (data: TProfile[]) => {
     setProfiles_(data);
-    window.api.store_profiles(data);
+    void window.api.store_profiles(data);
   };
+  useEffect(() => {
+    const load = async () => {
+      setProfiles_(await window.api.load_profiles());
+    };
+    void load();
+  }, [0]);
   if (
     !setColors ||
     !colors ||
@@ -86,6 +90,7 @@ const Inspector = () => {
   if (selectedProfile === -1 && profiles.length > 0) {
     setSelectedProfile(0);
   }
+  console.log(profiles);
   return (
     <div className={Styles.wrapper}>
       <select
