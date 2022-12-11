@@ -39,6 +39,11 @@ const RetroWindow = (props: RetroWindowProps) => {
   // ウィンドウに対する参照
   const innerWindow = useRef<HTMLDivElement>(null);
 
+  const moveWindowFront = () => {
+    if (setWindowContext) {
+      setWindowContext({ [props.window.id]: props.window, ...data });
+    }
+  };
   // マウスが動いている時のイベント
   const onMouseMove = (event: MouseEvent) => {
     if (innerWindow.current) {
@@ -182,7 +187,7 @@ const RetroWindow = (props: RetroWindowProps) => {
   };
 
   // 最大化する時のイベント
-  const onMaximize: MouseEventHandler<HTMLButtonElement> = (event) => {
+  const onMaximize: MouseEventHandler<unknown> = (event) => {
     event.stopPropagation();
     setDrugging(false);
     if (!props.window.isMaximized) {
@@ -207,7 +212,6 @@ const RetroWindow = (props: RetroWindowProps) => {
       }
     }
   };
-
   // drugging が変更された時の副作用を設定
   useEffect(() => {
     if (drugging) {
@@ -244,8 +248,16 @@ const RetroWindow = (props: RetroWindowProps) => {
 
   // ウィンドウを描画
   return (
-    <div className={`window ${Styles["inner-window"]}`} ref={innerWindow}>
-      <div className="title-bar" onMouseDown={onWindowMove}>
+    <div
+      className={`window ${Styles["inner-window"]}`}
+      ref={innerWindow}
+      onMouseDown={moveWindowFront}
+    >
+      <div
+        className="title-bar"
+        onMouseDown={onWindowMove}
+        onDoubleClick={onMaximize}
+      >
         <div className="title-bar-text" style={{ userSelect: "none" }}>
           {props.window.title}
         </div>
