@@ -4,7 +4,6 @@ import { selectableColors } from "@/definition/colors";
 import { useContext, useState } from "react";
 import { colorContext } from "@/context/color";
 import { hex2rgb } from "@/libs/hex2rgb";
-import { rgb2hex } from "@/libs/rgb2hex";
 
 const Color = () => {
   const [target, setTarget] = useState<TColorsTarget>("screenText");

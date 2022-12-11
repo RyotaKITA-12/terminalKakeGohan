@@ -42,7 +42,7 @@ const Inspector = () => {
     setProfiles([
       ...profiles,
       JSON.parse(JSON.stringify({ ...defaultProfile, id: generateUuid() })),
-    ]);
+    ] as TProfile[]);
   };
   const onClickLoad = () => {
     const target = profiles[selectedProfile];
@@ -66,7 +66,7 @@ const Inspector = () => {
     target.prompt = [...promptList];
     target.color = { ...colors };
     target.caret = caret;
-    setProfiles(JSON.parse(JSON.stringify([...profiles])));
+    setProfiles(JSON.parse(JSON.stringify([...profiles])) as TProfile[]);
   };
   const onClickRename = () => {
     const uuid = generateUuid();
@@ -91,12 +91,12 @@ const Inspector = () => {
     setWindowContext({ [uuid]: rename, ...data });
   };
   const onClickApply = () => {
-    window.api.apply_tprofile(profiles[selectedProfile]);
+    if (profiles[selectedProfile])
+      void window.api.apply_tprofile(profiles[selectedProfile]);
   };
   if (selectedProfile === -1 && profiles.length > 0) {
     setSelectedProfile(0);
   }
-  console.log(profiles);
   return (
     <div className={Styles.wrapper}>
       <select

@@ -18,7 +18,7 @@ const Rename = ({ id, value, onChange }: props) => {
         onChange={(e) => setString(e.target.value)}
       />
       <button
-        onClick={(e) => {
+        onClick={() => {
           onChange(string);
           delete data[id];
           setWindowContext({ ...data });
